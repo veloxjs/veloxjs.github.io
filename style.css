@@ -1,0 +1,46 @@
+body{
+    font-family: butler;
+    color: #58595b;
+    font-size: 18px;
+}
+
+h1 {
+    font-family: butlerbold ;
+}
+
+a, a:hover, a:active {
+    color: inherit
+}
+
+.code-legend {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    color: black;
+    font-family: butlerbold;
+}
+
+pre {
+    position: relative
+}
+
+code.hljs {
+    background: none
+}
+
+.example-result::before {
+    content: 'Result';
+    position: absolute;
+    right: 30px;
+    top: 3px;
+    color: black;
+    font-family: butlerbold;
+    display: block;
+    font-size: 13px;
+}
+.example-result {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+}

@@ -1,1 +1,134 @@
-Hello
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>VeloxJS</title>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="http://rawgit.com/aetna-softwares/velox-loader/master/VeloxScriptLoader.js"></script>
+    <script>
+      window.addEventListener("load", function load(event){
+        veloxScriptLoader.load(
+         [ 
+           {
+              name: "velox-web-view",
+              type: "js",
+              version: "0.0.1",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/846643e0336fa82d39ead4c42d649b0771cd92b0/velox-web-view.js",
+          },
+           {
+              name: "velox-controller",
+              type: "js",
+              version: "0.0.1a",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/4f48a51ff56cef8b43284805340f9f2044964687/velox-app-controller.js"
+          },
+           {
+              name: "velox-controller-view",
+              type: "js",
+              version: "0.0.1a",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/4f48a51ff56cef8b43284805340f9f2044964687/velox-view-controller.js"
+          }
+          ]
+        , function(){
+
+          VeloxWebView.registerExtension({
+            name:"highlight",
+            init: function(){
+              var view = this ;
+              $(view.container).find('pre code').each(function(i, block) {
+                Array.prototype.slice.apply(block.querySelectorAll("[data-original-id]")).forEach(function(el){
+                  el.setAttribute("id", el.getAttribute("data-original-id")) ;
+                  el.removeAttribute("data-original-id") ;
+                }) ;
+                var html = block.innerHTML;
+                html = html.replace(/=""/g, "") ;
+                block.innerHTML = $('<div/>').text(html).html();
+                hljs.highlightBlock(block);
+              });
+            }
+          })
+
+          var app = new VeloxAppController() ;
+          VeloxViewController.setDefaultContainerParent("container") ;
+
+          new VeloxWebView("views/header", "header", {container: "header"}).open({
+            modules : [
+              {name: "View", icon: "paint-brush"},
+              {name: "Controller", icon: "gamepad"},
+              {name: "API", icon: "database"}
+            ]
+          })
+
+
+
+          app.registerController(new VeloxViewController({
+            directory : "views/welcome",
+            name: "welcome",
+            route: ""
+          }))
+
+          app.registerController(new VeloxViewController({
+            directory : "views/why",
+            name: "why",
+            route: "why"
+          }))
+          app.registerController(new VeloxViewController({
+            directory : "views/view",
+            name: "view",
+            route: "view"
+          }))
+          app.registerController(new VeloxViewController({
+            directory : "views/controller",
+            name: "controller",
+            route: "controller"
+          }))
+          app.registerController(new VeloxViewController({
+            directory : "views/api",
+            name: "api",
+            route: "api"
+          }))
+
+          app.navigate() ;
+        }) ;
+
+      }) ;
+    </script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- Leave those next 4 lines if you care about users using IE8 -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+    <div id="header">
+      
+    </div>
+    
+    <div class="container" id="container">
+      
+    </div>
+
+    <!-- TODO: Here goes your content! -->
+
+
+
+    <!-- Including Bootstrap JS (with its jQuery dependency) so that dynamic components work -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>    
+  </body>
+</html>

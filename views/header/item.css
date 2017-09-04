@@ -1,0 +1,46 @@
+
+.menu-item {
+    background: #58595b;
+    width: 100px;
+    height: 100px;
+    color: #ffffff;
+    border-radius: 20px;
+    text-align: center;
+    padding: 20px 0;
+    display: block;
+    cursor: pointer;
+}
+
+.menu-item:hover, .menu-item:active, .menu-item:focus {
+    color: white;
+    text-decoration: none
+}
+
+.menu-item > i {
+    font-size: 28px;
+}
+
+.menu-label {
+    font-family: butler;
+    padding-top: 5px;
+}
+
+.menu-view {
+    background-color: #FFA550;
+}
+.menu-view:hover {
+    background-color: #AA5300;
+}
+.menu-controller {
+    background-color: #3897AA
+}
+.menu-controller:hover {
+    background-color: #025969
+}
+.menu-api {
+    background-color: #3FC95D
+}
+.menu-api:hover {
+    background-color: #00801C
+}
+

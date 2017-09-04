@@ -1,0 +1,151 @@
+<script>
+    (function example_hello(){
+        new VeloxWebView("examples", "hello", {container: view.EL.example_hello}).open();
+    })() ;
+    
+
+    (function example_hello_binding(){
+        var v = new VeloxWebView( "examples", "hello_binding", {container: view.EL.example_hello_binding}) ;
+        v.open({ color: "red", name: "VeloxJS" }) ; 
+    })() ;
+
+
+    (function example_hello_event(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_event", //name of the HTML view file
+            {container: view.EL.example_hello_event} 
+        ) ;
+        //open the view and give it some data to render
+        v.open({
+            color: "red",
+            name: "VeloxJS"
+        }) ;
+        //listen for changeData event
+        v.on("changeData", function(){
+            v.render({
+                color: "blue",
+                name: "Event !"
+            })
+        }) ;
+    })() ;
+</script>
+<h1>View</h1>
+<h2>Introduction</h2>
+<p>
+    VeloxJS view rely on the following pillars :
+    <ul>
+        <li>Views are simple HTML/CSS files</li>
+        <li>Views must : render data, get user input and emit event on user interactions</li>
+        <li>Views must not : know the controller (no onClick="myController.myButtonClicked()"), 
+            do something without beeing explicitelly called (double data-binding), 
+            control the data (this is the role of controller)
+        </li>
+        <li>It must give access to high level feature through extension (i18n, field render : date, mask, grid, ..., automatic field creation from schema definition : define once, use everywhere)</li>
+    </ul>
+</p>
+
+<h2>Examples</h2>
+
+<h3>Dumb Hello World</h3>
+<p>This very basic example illustrate the fact that views are just pieces of HTML loaded in a container</p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre><div class="code-legend">examples/hello.html</div><code class="html"><span>Hello World!</span></code></pre>
+        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello", //name of the HTML view file
+    {container: "example_hello"} //optional container id to render
+) ;
+view.open() ; //open the view now !</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello">
+        </div>
+    </div>
+</div>
+
+<h3>Simple data binding</h3>
+<p>This example illustrate how we can do some data binding</p>
+<p>Use the mustache annotation to replace in attributes and data-bind attribute to replace the content</p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre><div class="code-legend">examples/hello_binding.html</div><code class="html"><span style="color: {color}">
+    Hello <span data-bind="name"></span>
+</span></code></pre>
+        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_binding", //name of the HTML view file
+    {container: "example_hello_binding"} 
+) ;
+//open the view and give it some data to render
+view.open({
+    color: "red",
+    name: "VeloxJS"
+}) ; </code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello_binding">
+        </div>
+    </div>
+</div>
+
+
+<h3>Events and re-render</h3>
+<p>This example illustrate how we handle event and do re-render</p>
+<p>The render will only affect element that are bound to something and will only affect the bound attribute or content</p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre><div class="code-legend">examples/hello_event.html</div><code class="html"><span style="color: {color}">
+    Hello <span data-bind="name"></span>
+</span>
+<!-- add a data-emit attribute will automatically listen for click on the button and emit and event with button id -->
+<button id="changeData" data-emit>Click me!</button></code></pre>
+        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_event", //name of the HTML view file
+    {container: "example_hello_event"} 
+) ;
+//open the view and give it some data to render
+view.open({
+    color: "red",
+    name: "VeloxJS"
+}) ;
+//listen for changeData event
+view.on("changeData", function(){
+    view.render({
+        color: "blue",
+        name: "Event !"
+    })
+}) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello_event">
+        </div>
+    </div>
+</div>
+
+<h3>Data binding again</h3>
+<p>Get user input</p>
+
+<h3>Complex data binding</h3>
+<p>Loop and nested views</p>
+
+<h3>Events on complex binding</h3>
+<p>Which occurence has been clicked ?</p>
+
+<h3>View scripting</h3>
+<p>View javascript</p>
+
+<h3>View styling</h3>
+<p>CSS</p>
+
+<h3>i18n extension</h3>
+<p>i18n</p>
+
+<h3>field extension</h3>
+<p>Field</p>
+
+<h3>field schema extension</h3>
+<p>Schema</p>

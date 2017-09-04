@@ -1,0 +1,79 @@
+<h1>Why I wrote a JS framework ?</h1>
+
+<p>
+  I am writing software for quite a long time and mostly used web application since early 2000's. 
+  A few years ago, I came to JS development with modern tools that came along with NodeJS rising and feel very comfortable with the language 
+  and technologies that floating around. 
+</p> 
+<p>
+  Except for frameworks. 
+</p>
+<p>
+  Because they are just that, a closed frame to your work. They solve for you a few problems that make you easier to start a new project. 
+  They bring to you awesome concepts and piece of technology but they also lock you in a frame that is very difficult to escape. 
+  And many developpers pay back the awesomeness of the beggining by fighting against the framework when the project begin to became serious.
+</p>
+<p>
+  As co-founder and CTO of Aetna Softwares, a small software company, I used to write my softwares without frameworks, just by assembling several
+  pieces of great JS libs and felt more and more comfortable far from the frameworks of the market. And after some years of writings helpers
+  libs for my project, I finally realize that I created... a new framework... 
+</p>
+<p>
+  I feel that if it fit me, it may fit others and I went to do a clean re-write and open source it
+</p>
+
+<h1>Is it really a framework ?</h1>
+
+<p>
+    Yes and no. 
+</p>
+<p>
+ Yes, because it may be used to get the structure of a new application from A to Z with very high level features.
+</p>
+<p>
+  No, because you can take only one part of it and use as lib in your own code or within another framework system.
+</p>
+
+<h1>What is its main features ?</h1>
+
+<p>
+  In its first version, it will provide : 
+  <ul>
+      <li>A simple view system with the following concepts : 
+          <ul>
+              <li>Views are simple HTML/CSS files</li>
+              <li>Views must : render data, get user input and emit event on user interactions</li>
+              <li>Views must not : know the controller (no onClick="myController.myButtonClicked()"), 
+                  do something without beeing explicitelly called (double data-binding), 
+                  control the data (this is the role of controller)
+              </li>
+              <li>Handle i18n (through extension)</li>
+              <li>High level field render : date, mask, grid, numbers, etc... (through extension)</li>
+              <li>Automatic field creation from schema definition : define once, use everywhere (through extension)</li>
+          </ul>
+      </li>
+      <li>A controller system : 
+          <ul>
+              <li>One-page routing with bookmarkable URL</li>
+              <li>Easy data passing through controller</li>
+              <li>Easy controller navigation with stackable routes</li>
+              <li>Ready to use controller to do CRUD screens (grid/form)</li>
+          </ul>
+      </li>
+      <li>A service API helper : 
+          <ul>
+              <li>Centralize all ajax calls</li>
+              <li>Provide a clean client api to server endpoints</li>
+          </ul>
+      </li>
+      <li>Database management (server + client API)
+          <ul>
+              <li>Schema version management</li>
+              <li>Clean client API to have logic in client controller but stay transactionnal</li>
+              <li>Modification and delete tracking (through extension)</li>
+              <li>Offline automatic synchronization (through extension)</li>
+              <li>Integrated user management system (through extension)</li>
+          </ul>
+      </li>
+  </ul>
+</p>
