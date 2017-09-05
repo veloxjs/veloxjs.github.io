@@ -127,7 +127,39 @@ view.on("changeData", function(){
 </div>
 
 <h3>Data binding again</h3>
-<p>Get user input</p>
+<p>This example illustrate how to get user input</p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre><div class="code-legend">examples/hello_input.html</div><code class="html"><span style="color: {color}">
+    Hello <span data-bind="name"></span>
+</span>
+<input type="text" data-bind="name" />
+<!-- add a data-emit attribute will automatically listen for click on the button and emit and event with button id -->
+<button id="go" data-emit>Go !</button></code></pre>
+        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_input", //name of the HTML view file
+    {container: "example_hello_input"} 
+) ;
+//open the view and give it some data to render
+view.open({
+    color: "red",
+    name: "VeloxJS"
+}) ;
+//listen for changeData event
+view.on("changeData", function(){
+    view.render({
+        color: "blue",
+        name: "Event !"
+    })
+}) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello_event">
+        </div>
+    </div>
+</div>
 
 <h3>Complex data binding</h3>
 <p>Loop and nested views</p>
@@ -141,6 +173,12 @@ view.on("changeData", function(){
 <h3>View styling</h3>
 <p>CSS</p>
 
+<h3>Dialog and long task</h3>
+<p>long task</p>
+
+<h3>Dialog extension</h3>
+<p>dialog</p>
+
 <h3>i18n extension</h3>
 <p>i18n</p>
 
@@ -149,3 +187,9 @@ view.on("changeData", function(){
 
 <h3>field schema extension</h3>
 <p>Schema</p>
+
+<h3>create extension</h3>
+<p>Highlight example</p>
+
+<h3>Real world usage</h3>
+<p>This website use the view system !</p>
