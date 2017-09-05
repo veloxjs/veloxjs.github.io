@@ -29,6 +29,25 @@
             })
         }) ;
     })() ;
+    
+    (function example_hello_input(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_input", //name of the HTML view file
+            {container: view.EL.example_hello_input} 
+        ) ;
+        //open the view and give it some data to render
+        var data = {
+            color: "red",
+            name: "VeloxJS"
+        } ;
+        v.open(data) ;
+        
+        v.on("go", function(){
+            v.updateData() ;
+            v.render()
+        }) ;
+    })() ;
 </script>
 <h1>View</h1>
 <h2>Introduction</h2>
@@ -132,7 +151,8 @@ view.on("changeData", function(){
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <pre><div class="code-legend">examples/hello_input.html</div><code class="html"><span style="color: {color}">
     Hello <span data-bind="name"></span>
-</span>
+</span><br />
+<label>Change the name value</label>
 <input type="text" data-bind="name" />
 <!-- add a data-emit attribute will automatically listen for click on the button and emit and event with button id -->
 <button id="go" data-emit>Go !</button></code></pre>
@@ -142,21 +162,22 @@ view.on("changeData", function(){
     {container: "example_hello_input"} 
 ) ;
 //open the view and give it some data to render
-view.open({
+var data = {
     color: "red",
     name: "VeloxJS"
-}) ;
-//listen for changeData event
-view.on("changeData", function(){
-    view.render({
-        color: "blue",
-        name: "Event !"
-    })
+} ;
+view.open(data) ;
+//listen for go event
+view.on("go", function(){
+    //update the data object from view
+    view.updateData() ;
+    //re render the view
+    view.render()
 }) ;
 </code></pre>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <div class="example-result" id="example_hello_event">
+        <div class="example-result" id="example_hello_input">
         </div>
     </div>
 </div>
