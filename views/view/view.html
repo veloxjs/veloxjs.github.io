@@ -121,6 +121,101 @@
         ) ;
         v.open() ;
     })() ;
+    
+    (function example_hello_styling(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_styling", //name of the HTML view file
+            {container: view.EL.example_hello_styling} 
+        ) ;
+        v.open() ;
+    })() ;
+    
+    (function example_hello_styling2(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_styling2", //name of the HTML view file
+            {container: view.EL.example_hello_styling2} 
+        ) ;
+        v.open() ;
+    })() ;
+
+    (function example_hello_longtask(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_longtask", //name of the HTML view file
+            {container: view.EL.example_hello_longtask} 
+        ) ;
+        v.error = function(message) {window.alert(message); } //by pass dialog extension
+        v.open() ;
+        v.on("startCb", function(){
+            //start a long task in callback style
+            v.longTask(function(done){
+                setTimeout(function(){
+                    done() ; //call done when finished
+                }, 5000) ;
+            }, "Coffee time!") ;
+        }) ;
+        v.on("startProm", function(){
+            //start a long task in promise style
+            v.longTask(new Promise((resolve, reject)=>{
+                setTimeout(function(){
+                    resolve() ; //resolve on finished
+                }, 5000) ;
+            })) ;
+        }) ;
+        v.on("startCbErr", function(){
+            //start a long task in callback style
+            v.longTask(function(done){
+                setTimeout(function(){
+                    done("Dear user, we are very sorry but some solar disturbances reach our server and you experience a very unlikely error") ;
+                }, 2000) ;
+            }) ;
+        }) ;
+        v.on("startPromErr", function(){
+            //start a long task in promise style
+            v.longTask(new Promise((resolve, reject)=>{
+                setTimeout(function(){
+                    reject("Due to alien invasion in our office, the software decide by itself to create random errors") ;
+                }, 2000) ;
+            })) ;
+        }) ;
+    })() ;
+    
+    (function example_hello_dialog(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_dialog", //name of the HTML view file
+            {container: view.EL.example_hello_dialog} 
+        ) ;
+        v.open() ;
+        v.on("info", function(){
+            v.info("Trying to say something clever") ;
+        }) ;
+        v.on("error", function(){
+            v.error("No clue how you got in a so bad position !") ;
+        }) ;
+        v.on("confirm", function(){
+            v.confirm("Are you sure that you want to press on the red button ?", 
+                function(yes){
+                    if(yes){
+                        v.info("Boom.") ;
+                    }
+                }) ;
+        }) ;
+        v.on("confirmCustom", function(){
+            v.confirm("Are you sure ?", 
+            {
+                yesLabel: "Yes, we can",
+                noLabel: "No, never !"
+            },
+            function(yes){
+                if(yes){
+                    v.info("Boom. Again.") ;
+                }
+            }) ;
+        }) ;
+    })() ;
 
 </script>
 <h1>View</h1>
@@ -391,7 +486,7 @@ view.on("retry", function(ev){
 </div>
 <h3 data-anchor="scripting">View scripting</h3>
 <p>A view is HTML and CSS but you may need a bit of scripting.</p>
-<p>For example, you want to use fluidbox jquery plugin in your view</p>
+<p>For example, you want to use <a href="https://safi.me.uk/typewriterjs/" target="_blank">Typewriter</a> lib in your view</p>
 <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <pre data-dont-process><div class="code-legend">examples/hello_scripting.html</div><code class="html"><script>
@@ -442,13 +537,178 @@ view.open() ;
     </div>
 
 <h3 data-anchor="styling">View styling</h3>
-<p>CSS</p>
+<p>This example show you how to make your view more colorful</p>
+<p>The first way to have some CSS to your view is to have style block in the HTML file</p>
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_styling.html</div><code class="html"><style>
+.blue { background: blue ; color: white}
+.red { background: red ; color: white}
+</style>
+<div class="blue">Hello</div>
+<div class="red">World</div>
+</code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_styling", //name of the HTML view file
+    {container: "example_hello_styling"} 
+) ;
+view.open() ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_styling">
+            </div>
+        </div>
+    </div>
 
-<h3 data-anchor="long">Dialog and long task</h3>
-<p>long task</p>
+<p>If you have more than a few CSS rules, you can define rules in a separate CSS file having the same name as the HTML file</p>
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_styling2.html</div><code class="html">
+<div class="green">Hello</div>
+<div class="yellow">World</div>
+</code></pre>
+<pre data-dont-process><div class="code-legend">examples/hello_styling2.css</div><code class="css">
+.green { background: green ; color: white}
+.yellow { background: yellow ; color: black}
+        </code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_styling2", //name of the HTML view file
+    {container: "example_hello_styling2"} 
+) ;
+view.open() ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_styling2">
+            </div>
+        </div>
+    </div>
+
+<h3 data-anchor="long">Long task</h3>
+<p>It will come a time when you will need to ask user to wait until something running asynchroneously is done</p>
+<p>This example demonstrate the long task pattern</p>
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_longtask.html</div><code class="html">
+<button id="startCb" data-emit>Start (callback style)</button>
+<button id="startProm" data-emit>Start (promise style)</button>
+<button id="startCbErr" data-emit>Start and fail (callback style)</button>
+<button id="startPromErr" data-emit>Start and fail (promise style)</button>
+</code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_longtask", //name of the HTML view file
+    {container: "example_hello_longtask"} 
+) ;
+view.open() ;
+view.on("startCb", function(){
+    //start a long task in callback style
+    view.longTask(function(done){
+        setTimeout(function(){
+            done() ; //call done when finished
+        }, 5000) ;
+    }, 
+    "Coffee time!" //optional wait message
+    ) ;
+}) ;
+view.on("startProm", function(){
+    //start a long task in promise style
+    view.longTask(new Promise((resolve, reject)=>{
+        setTimeout(function(){
+            resolve() ; //resolve on finished
+        }, 5000) ;
+    })) ;
+}) ;
+view.on("startCbErr", function(){
+    //start a long task in callback style
+    view.longTask(function(done){
+        setTimeout(function(){
+            done("Dear user, we are very sorry but some solar disturbances reach our server and you experience a very unlikely error") ;
+        }, 2000) ;
+    }) ;
+}) ;
+view.on("startPromErr", function(){
+    //start a long task in promise style
+    view.longTask(new Promise((resolve, reject)=>{
+        setTimeout(function(){
+            reject("Due to alien invasion in our office, the software decide by itself to create random errors") ;
+        }, 2000) ;
+    })) ;
+}) ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_longtask">
+            </div>
+        </div>
+    </div>
+
+<h2>Extensions</h2>
+<p>Extensions came to add more hight level features to the view system.</p>
+<p>These features are put in extensions for 2 reasons : 
+<ul>
+    <li>To keep the view system by itself as light as possible and with 0 third party dependency</li>
+    <li>Extensions came with third party dependencies that may or may not fit your choices. We like you to be free to use what you want</li>
+</ul>
+</p>
 
 <h3 data-anchor="dialog-extension">Dialog extension</h3>
-<p>dialog</p>
+<p>The dialog extension gives you classical info/error/confirm dialogs.</p> 
+<p>The extension use <a href="http://w2ui.com" target="_blank">w2ui</a></p>
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_dialog.html</div><code class="html">
+<button id="info" data-emit>Info</button>
+<button id="error" data-emit>Error</button>
+<button id="confirm" data-emit>Confirm</button>
+<button id="confirmCustom" data-emit>Confirm (custom)</button>
+</code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_dialog", //name of the HTML view file
+    {container: "example_hello_dialog"} 
+) ;
+view.open() ;
+view.on("info", function(){
+    view.info("Trying to say something clever") ;
+}) ;
+view.on("error", function(){
+    view.error("No clue how you got in a so bad position !") ;
+}) ;
+view.on("confirm", function(){
+    view.confirm("Are you sure that you want to press on the red button ?", 
+        function(yes){
+            if(yes){
+                view.info("Boom.") ;
+            }
+        }) ;
+}) ;
+view.on("confirmCustom", function(){
+    view.confirm("Are you sure ?", 
+    {
+        yesLabel: "Yes, we can",
+        noLabel: "No, never !"
+    },
+    function(yes){
+        if(yes){
+            view.info("Boom. Again.") ;
+        }
+    }) ;
+}) ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_dialog">
+            </div>
+        </div>
+    </div>
 
 <h3 data-anchor="i18n">i18n extension</h3>
 <p>i18n</p>
