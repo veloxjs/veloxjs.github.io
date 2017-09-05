@@ -1,0 +1,24 @@
+<label>Items to do</label>
+<ul data-show-if="todo">
+    <!-- Show if there is something in todo -->
+    <li data-bind="todo[]" data-view="hello_complex_one_item_event"></li>
+</ul>
+
+<div data-hide-if="todo">
+    <!-- Hide if there is something in todo -->
+    Nothing to do
+</div>
+<div data-show-if="done">
+    <!-- Show if there is something in done -->
+    <label>Item done</label>
+    <ul>
+        <li data-bind="done[]">
+            Hello <span data-bind="name"></span> 
+            <!-- Show only if the property status equals to missed -->
+            <span data-show-if="status === 'missed'"> 
+                <em>(Missed)</em>
+                <button id="retry" data-emit>Retry</button>
+            </span>
+        </li>
+    </ul>
+</div

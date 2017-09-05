@@ -48,6 +48,80 @@
             v.render()
         }) ;
     })() ;
+
+    (function example_hello_complex(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_complex", //name of the HTML view file
+            {container: view.EL.example_hello_complex} 
+        ) ;
+        //open the view and give it some data to render
+        var data = {
+            title: {color: "green", label: "Say hello todo list"},
+            todo: [
+                {name: "Bob"},
+                {name: "Alice"}
+                ],
+            done: [
+                {name: "Peter"},
+                {name: "John", cancelled: true}
+            ]
+        } ;
+        v.open(data) ;
+    })() ;
+    
+    (function example_hello_complex_event(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_complex_event", //name of the HTML view file
+            {container: view.EL.example_hello_complex_event} 
+        ) ;
+        var data = {
+            todo: [
+                {name: "Bob"},
+                {name: "Alice"},
+                {name: "Peter"},
+                {name: "John"}
+                ],
+            done: []
+        } ;
+        v.open(data) ;
+
+        v.on("said", function(ev){
+            //ev.data.currentData contains the object bound to the view occurence on which we clicked
+            var clickedLine = ev.data.currentData ;
+            clickedLine.status = 'said' ;
+            data.done.push(clickedLine) ;
+            data.todo.splice(data.todo.indexOf(clickedLine), 1) ;
+            v.render() ;
+        }) ;
+        v.on("missed", function(ev){
+            //ev.data.currentData contains the object bound to the view occurence on which we clicked
+            var clickedLine = ev.data.currentData ;
+            clickedLine.status = 'missed' ;
+            data.done.push(clickedLine) ;
+            data.todo.splice(data.todo.indexOf(clickedLine), 1) ;
+            v.render() ;
+        }) ;
+        v.on("retry", function(ev){
+            //ev.data.currentData contains the object bound to the view occurence on which we clicked
+            var clickedLine = ev.data.currentData ;
+            clickedLine.status = 'todo' ;
+            data.todo.push(clickedLine) ;
+            data.done.splice(data.done.indexOf(clickedLine), 1) ;
+            v.render() ;
+        }) ;
+    })() ;
+
+    (function example_hello_scripting(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_scripting", //name of the HTML view file
+            {container: view.EL.example_hello_scripting} 
+        ) ;
+        v.open() ;
+    })() ;
+
 </script>
 <h1>View</h1>
 <h2>Introduction</h2>
@@ -66,12 +140,12 @@
 
 <h2>Examples</h2>
 
-<h3>Dumb Hello World</h3>
+<h3 data-anchor="hello">Dumb Hello World</h3>
 <p>This very basic example illustrate the fact that views are just pieces of HTML loaded in a container</p>
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <pre><div class="code-legend">examples/hello.html</div><code class="html"><span>Hello World!</span></code></pre>
-        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+        <pre data-dont-process><div class="code-legend">examples/hello.html</div><code class="html"><span>Hello World!</span></code></pre>
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
     "examples", //folder in which the HTML view file is located
     "hello", //name of the HTML view file
     {container: "example_hello"} //optional container id to render
@@ -84,15 +158,15 @@ view.open() ; //open the view now !</code></pre>
     </div>
 </div>
 
-<h3>Simple data binding</h3>
+<h3 data-anchor="binding">Simple data binding</h3>
 <p>This example illustrate how we can do some data binding</p>
 <p>Use the mustache annotation to replace in attributes and data-bind attribute to replace the content</p>
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <pre><div class="code-legend">examples/hello_binding.html</div><code class="html"><span style="color: {color}">
+        <pre data-dont-process><div class="code-legend">examples/hello_binding.html</div><code class="html"><span style="color: {color}">
     Hello <span data-bind="name"></span>
 </span></code></pre>
-        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
     "examples", //folder in which the HTML view file is located
     "hello_binding", //name of the HTML view file
     {container: "example_hello_binding"} 
@@ -110,17 +184,17 @@ view.open({
 </div>
 
 
-<h3>Events and re-render</h3>
+<h3 data-anchor="event">Events and re-render</h3>
 <p>This example illustrate how we handle event and do re-render</p>
 <p>The render will only affect element that are bound to something and will only affect the bound attribute or content</p>
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <pre><div class="code-legend">examples/hello_event.html</div><code class="html"><span style="color: {color}">
+        <pre data-dont-process><div class="code-legend">examples/hello_event.html</div><code class="html"><span style="color: {color}">
     Hello <span data-bind="name"></span>
 </span>
 <!-- add a data-emit attribute will automatically listen for click on the button and emit and event with button id -->
 <button id="changeData" data-emit>Click me!</button></code></pre>
-        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
     "examples", //folder in which the HTML view file is located
     "hello_event", //name of the HTML view file
     {container: "example_hello_event"} 
@@ -145,18 +219,18 @@ view.on("changeData", function(){
     </div>
 </div>
 
-<h3>Data binding again</h3>
+<h3 data-anchor="binding-again">Data binding again</h3>
 <p>This example illustrate how to get user input</p>
 <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <pre><div class="code-legend">examples/hello_input.html</div><code class="html"><span style="color: {color}">
+        <pre data-dont-process><div class="code-legend">examples/hello_input.html</div><code class="html"><span style="color: {color}">
     Hello <span data-bind="name"></span>
 </span><br />
 <label>Change the name value</label>
+<!-- bind a text field to name property -->
 <input type="text" data-bind="name" />
-<!-- add a data-emit attribute will automatically listen for click on the button and emit and event with button id -->
 <button id="go" data-emit>Go !</button></code></pre>
-        <pre><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
     "examples", //folder in which the HTML view file is located
     "hello_input", //name of the HTML view file
     {container: "example_hello_input"} 
@@ -182,35 +256,211 @@ view.on("go", function(){
     </div>
 </div>
 
-<h3>Complex data binding</h3>
-<p>Loop and nested views</p>
+<h3 data-anchor="complex">Complex data binding</h3>
+<p>We go now to more complex data binding with loop and nested view</p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre data-dont-process><div class="code-legend">examples/hello_complex.html</div><code class="html"><!-- Nest an header view -->
+<div data-view="hello_complex_title" data-bind="title"></div>
+<label>Items to do</label>
+<ul>
+    <!-- Repeat a view for all element in todo array -->
+    <li data-bind="todo[]" data-view="hello_complex_one_item"></li>
+</ul>
+<label>Item done</label>
+<ul>
+    <!-- Repeat an HTML block for all  -->
+    <li data-bind="done[]">
+        Hello <span data-bind="name"></span> 
+        <!-- Show only if the property cancelled is not false/null/undefined -->
+        <span data-show-if="cancelled"> <em>(Cancelled)</em></span>
+    </li>
+</ul></code></pre>
 
-<h3>Events on complex binding</h3>
-<p>Which occurence has been clicked ?</p>
+<pre data-dont-process><div class="code-legend">examples/hello_complex_title.html</div><code class="html"><h3 style="color: {color}" data-bind="label"></h3></code></pre>
 
-<h3>View scripting</h3>
-<p>View javascript</p>
+<pre data-dont-process><div class="code-legend">examples/hello_complex_one_item.html</div><code class="html">You must say hello to : <span data-bind="name"></span></code></pre>
 
-<h3>View styling</h3>
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_complex", //name of the HTML view file
+    {container: "example_hello_complex"} 
+) ;
+//open the view and give it some data to render
+var data = {
+    title: {color: "green", label: "Say hello todo list"},
+    todo: [
+        {name: "Bob"},
+        {name: "Alice"}
+        ],
+    done: [
+        {name: "Peter"},
+        {name: "John", cancelled: true}
+    ]
+} ;
+view.open(data) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello_complex">
+        </div>
+    </div>
+</div>
+
+<h3 data-anchor="complex-event">Events on complex binding</h3>
+<p>This example shows how to handle event on nested repeating views</p>
+<p>It also demonstrate more of show-if and hide-if instruction</p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre data-dont-process><div class="code-legend">examples/hello_complex_event.html</div><code class="html"><label>Items to do</label>
+<ul data-show-if="todo">
+    <!-- Show if there is something in todo -->
+    <li data-bind="todo[]" data-view="hello_complex_one_item_event"></li>
+</ul>
+
+<div data-hide-if="todo">
+    <!-- Hide if there is something in todo -->
+    Nothing to do
+</div>
+<div data-show-if="done">
+    <!-- Show if there is something in done -->
+    <label>Item done</label>
+    <ul>
+        <li data-bind="done[]">
+            Hello <span data-bind="name"></span> 
+            <!-- Show only if the property status equals to missed -->
+            <span data-show-if="status === 'missed'"> 
+                <em>(Missed)</em>
+                <button id="retry" data-emit>Retry</button>
+            </span>
+        </li>
+    </ul>
+</div></code></pre>
+
+<pre data-dont-process><div class="code-legend">examples/hello_complex_one_item_event.html</div><code class="html">You must say hello to : 
+<span data-bind="name"></span>
+<button id="said" data-emit>I said hello</button>
+<button id="missed" data-emit>We missed</button>
+</code></pre>
+
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_complex_event", //name of the HTML view file
+    {container: "example_hello_complex_event"} 
+) ;
+var data = {
+    todo: [
+        {name: "Bob"},
+        {name: "Alice"},
+        {name: "Peter"},
+        {name: "John"}
+        ],
+    done: []
+} ;
+view.open(data) ;
+view.on("said", function(ev){
+    //ev.data.currentData contains the object bound to the view occurence on which we clicked
+    var clickedLine = ev.data.currentData ;
+    clickedLine.status = 'said' ;
+    data.done.push(clickedLine) ;
+    data.todo.splice(data.todo.indexOf(clickedLine), 1) ;
+    view.render() ;
+}) ;
+view.on("missed", function(ev){
+    //ev.data.currentData contains the object bound to the view occurence on which we clicked
+    var clickedLine = ev.data.currentData ;
+    clickedLine.status = 'missed' ;
+    data.done.push(clickedLine) ;
+    data.todo.splice(data.todo.indexOf(clickedLine), 1) ;
+    view.render() ;
+}) ;
+view.on("retry", function(ev){
+    //ev.data.currentData contains the object bound to the view occurence on which we clicked
+    var clickedLine = ev.data.currentData ;
+    clickedLine.status = 'todo' ;
+    data.todo.push(clickedLine) ;
+    data.done.splice(data.done.indexOf(clickedLine), 1) ;
+    view.render() ;
+}) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello_complex_event">
+        </div>
+    </div>
+</div>
+<h3 data-anchor="scripting">View scripting</h3>
+<p>A view is HTML and CSS but you may need a bit of scripting.</p>
+<p>For example, you want to use fluidbox jquery plugin in your view</p>
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_scripting.html</div><code class="html"><script>
+//this code is executed after view initialization done. 
+//DOM element are accessible
+
+//the view instance is accessible with "view" variable
+
+//the only thing that change with normal javascript 
+//is the way to get element by id.
+//because a view can be re-use many time in the same page, 
+//the id of element is modified
+//to ensure unicity in the document. To get an element of 
+//this view by its id, the view 
+//gives you the view.EL collection
+
+//get HTMLElement having id typehere in this view
+var typehere = view.EL.typehere ;
+
+//Use whatever JS lib you want the same way 
+//as you write normal JS.
+//No special integration is needed
+var typewriter = new Typewriter(typehere, {
+    loop: true
+});
+
+typewriter.typeString('Hello VeloxJS!')
+.pauseFor(2500)
+.deleteChars(8)
+.typeString('World!')
+.pauseFor(2500)
+.start();
+</script>
+<div id="typehere"></div></code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_scripting", //name of the HTML view file
+    {container: "example_hello_scripting"} 
+) ;
+view.open() ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_scripting">
+            </div>
+        </div>
+    </div>
+
+<h3 data-anchor="styling">View styling</h3>
 <p>CSS</p>
 
-<h3>Dialog and long task</h3>
+<h3 data-anchor="long">Dialog and long task</h3>
 <p>long task</p>
 
-<h3>Dialog extension</h3>
+<h3 data-anchor="dialog-extension">Dialog extension</h3>
 <p>dialog</p>
 
-<h3>i18n extension</h3>
+<h3 data-anchor="i18n">i18n extension</h3>
 <p>i18n</p>
 
-<h3>field extension</h3>
+<h3 data-anchor="field">field extension</h3>
 <p>Field</p>
 
-<h3>field schema extension</h3>
+<h3 data-anchor="schema">field schema extension</h3>
 <p>Schema</p>
 
-<h3>create extension</h3>
+<h3 data-anchor="extension">create extension</h3>
 <p>Highlight example</p>
 
-<h3>Real world usage</h3>
+<h3 data-anchor="real">Real world usage</h3>
 <p>This website use the view system !</p>

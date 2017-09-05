@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.rawgit.com/aetna-softwares/velox-loader/master/VeloxScriptLoader.js"></script>
+    
+
     <script>
       window.addEventListener("load", function load(event){
         veloxScriptLoader.load(
@@ -24,7 +26,7 @@
               name: "velox-web-view",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/846643e0336fa82d39ead4c42d649b0771cd92b0/velox-web-view.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/da4669f59efa083364661a974ab5481dbacf39bc/velox-web-view.js",
           },
            {
               name: "velox-controller",
@@ -55,6 +57,33 @@
                 block.innerHTML = $('<div/>').text(html).html();
                 hljs.highlightBlock(block);
               });
+            }
+          })
+          VeloxWebView.registerExtension({
+            name:"anchor",
+            init: function(){
+              var view = this ;
+              view.elementsHavingAttribute("data-anchor").forEach(function(el){
+                var a = document.createElement("a") ;
+                a.className = "anchor-link"
+                a.innerHTML = "<i class='fa fa-link'></i>" ;
+                var href = location.href ;
+                var firstIndex = href.indexOf("#") ;
+                var lastIndex = href.lastIndexOf("#") ;
+                if(firstIndex === lastIndex){
+                  href = href.substring(firstIndex)+"#"+el.getAttribute("data-anchor") ;
+                }else{
+                  href = href.substring(firstIndex, lastIndex)+"#"+el.getAttribute("data-anchor") ;
+                }
+                a.href = href ;
+                el.id = href.substring(1) ;
+                el.insertBefore(a, el.firstChild) ;
+                if(location.hash === href){
+                  setTimeout(function(){
+                    el.scrollIntoView() ;
+                  }) ;
+                }
+              }) ;
             }
           })
 
@@ -127,6 +156,9 @@
 
     <!-- Including Bootstrap JS (with its jQuery dependency) so that dynamic components work -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="//safi.me.uk/typewriterjs/js/typewriter.js"></script>
+    
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>    

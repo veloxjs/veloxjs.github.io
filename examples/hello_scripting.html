@@ -1,0 +1,14 @@
+<script>
+    var typewriter = new Typewriter(view.EL.typehere, {
+        loop: true
+    });
+
+    typewriter.typeString('Hello VeloxJS!')
+    .pauseFor(2500)
+    .deleteChars(8)
+    .typeString('World!')
+    .pauseFor(2500)
+    .start();
+</script>
+<div id="typehere">
+</div>
