@@ -1,0 +1,6 @@
+{
+    "hello": {
+        "world": "Bonjour tout le monde",
+        "langChanged": "Vous avez choisi {{chosenLang}}"
+    }
+}

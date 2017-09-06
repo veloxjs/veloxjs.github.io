@@ -193,7 +193,7 @@
             v.info("Trying to say something clever") ;
         }) ;
         v.on("error", function(){
-            v.error("No clue how you got in a so bad position !") ;
+            VeloxWebView.error("No clue how you got in a so bad position !") ;
         }) ;
         v.on("confirm", function(){
             v.confirm("Are you sure that you want to press on the red button ?", 
@@ -214,6 +214,61 @@
                     v.info("Boom. Again.") ;
                 }
             }) ;
+        }) ;
+    })() ;
+    
+    (function example_hello_popup(){
+        var v = new VeloxWebView(
+        "examples", //folder in which the HTML view file is located
+        "hello_popup" //name of the HTML view file
+        ) ;
+        
+        view.EL.example_open_popup.addEventListener("click", function(){
+            v.openInPopup({
+                modal: true,
+                title : "Popup example",
+                width: 500,
+                height: 300,
+                closeWithEsc: true
+            }) ;
+        }) ;
+    })() ;
+    
+    (function example_hello_popup2(){
+        view.EL.example_open_popup2.addEventListener("click", function(){
+            var v = new VeloxWebView(
+                {html: '<p>KEEPER ask What is your favorite color?</p><button id="blue" data-emit>Blue</button><button id="yellow" data-emit>Blue. No yel--</button>'}
+                ) ;
+            v.openInPopup({width: 200, height: 150}) ;
+            v.on("blue", function(){
+                v.close() ;
+                v.info("Right. Off you go.") ;
+            }) ;
+            v.on("yellow", function(){
+                v.close() ;
+                v.info("Auuuuuuuugh!") ;
+            }) ;
+        }) ;
+    })() ;
+    
+    (function example_hello_i18n(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_i18n", //name of the HTML view file
+            {container: view.EL.example_hello_i18n} 
+        ) ;
+        var data = {
+            //get the current lang
+            lang: VeloxWebView.i18n.getLang() 
+        } ;
+        v.open(data) ;
+        v.on("lang", function(){
+            //get the lang chosen by user
+            v.updateData(); 
+            //set the lang update the view automatically
+            VeloxWebView.i18n.setLang(data.lang) ; 
+            //you can call VeloxWebView.tr or view.tr to translate a string
+            VeloxWebView.info(VeloxWebView.tr("hello.langChanged", {chosenLang : data.lang})) ;
         }) ;
     })() ;
 
@@ -563,10 +618,12 @@ view.open() ;
         </div>
     </div>
 
-<p>If you have more than a few CSS rules, you can define rules in a separate CSS file having the same name as the HTML file</p>
+<p>If you have more than a few CSS rules, you can link to an external file.</p>
+<p>The file path is relative to your view folder</p>
 <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <pre data-dont-process><div class="code-legend">examples/hello_styling2.html</div><code class="html">
+<style data-file="hello_styling2.css"></style>
 <div class="green">Hello</div>
 <div class="yellow">World</div>
 </code></pre>
@@ -680,7 +737,8 @@ view.on("info", function(){
     view.info("Trying to say something clever") ;
 }) ;
 view.on("error", function(){
-    view.error("No clue how you got in a so bad position !") ;
+    //these functions are available both on instance and globally
+    VeloxWebView.error("No clue how you got in a so bad position !") ;
 }) ;
 view.on("confirm", function(){
     view.confirm("Are you sure that you want to press on the red button ?", 
@@ -710,8 +768,113 @@ view.on("confirmCustom", function(){
         </div>
     </div>
 
-<h3 data-anchor="i18n">i18n extension</h3>
-<p>i18n</p>
+<p>The dialog also give you the possibility to open a view inside a popup</p> 
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre data-dont-process><div class="code-legend">examples/hello_popup.html</div><code class="html">
+<h1>Look! I am in a popup</h1>
+</code></pre>
+
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+"examples", //folder in which the HTML view file is located
+"hello_popup" //name of the HTML view file
+) ;
+
+document.getElementById("example_open_popup").addEventListener("click", function(){
+    view.openInPopup({
+        modal: true,
+        title : "Popup example",
+        width: 500,
+        height: 300,
+        closeWithEsc: true
+    }) ;
+}) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <button id="example_open_popup">Click to open view in popup</button>
+    </div>
+</div>
+
+<p>You can define view inline, this is particulary useful with popup for small custom dialogs</p> 
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">
+
+document.getElementById("example_open_popup2").addEventListener("click", function(){
+    var view = new VeloxWebView(
+        {html: '<p>KEEPER ask What is your favorite color?</p><button id="blue" data-emit>Blue</button><button id="yellow" data-emit>Blue. No yel--</button>'}
+        ) ;
+    view.openInPopup({width: 200, height: 150}) ;
+    view.on("blue", function(){
+        view.close() ;
+        view.info("Right. Off you go.") ;
+    }) ;
+    view.on("yellow", function(){
+        view.close() ;
+        view.info("Auuuuuuuugh!") ;
+    }) ;
+}) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <button id="example_open_popup2">Click to open view in popup</button>
+    </div>
+</div>
+
+<h3 data-anchor="i18n">I18n extension</h3>
+<p>The i18n extension aims to handle translation in views</p>
+<p>This extension use <a href="https://www.i18next.com/">i18next</a></p>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <pre data-dont-process><div class="code-legend">examples/hello_i18n.html</div><code class="html">
+<p data-i18n="hello.world"></p>
+<select id="lang" data-bind="lang" data-emit>
+    <option value="en-US">English</option>
+    <option value="fr-FR">Français</option>
+</select>
+</code></pre>
+<pre data-dont-process><div class="code-legend">locales/en-US.json</div><code class="javascript">
+{
+    "hello": {
+        "world": "Hello World",
+        "langChanged": "You choose {{chosenLang}}"
+    }
+}
+</code></pre>  
+<pre data-dont-process><div class="code-legend">locales/fr-FR.json</div><code class="javascript">
+{
+    "hello": {
+        "world": "Bonjour tout le monde",
+        "langChanged": "Vous avez choisi {{chosenLang}}"
+    }
+}
+</code></pre>  
+        <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+"examples", //folder in which the HTML view file is located
+"hello_i18n", //name of the HTML view file
+{container: "example_hello_i18n"} 
+) ;
+var data = {
+    //get the current lang
+    lang: VeloxWebView.i18n.getLang() 
+} ;
+view.open(data) ;
+view.on("lang", function(){
+    //get the lang chosen by user
+    view.updateData(); 
+    //set the lang update the view automatically
+    VeloxWebView.i18n.setLang(data.lang) ; 
+    //you can call VeloxWebView.tr or view.tr to translate a string
+    VeloxWebView.info(VeloxWebView.tr("hello.langChanged", {chosenLang : data.lang})) ;
+}) ;
+</code></pre>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="example-result" id="example_hello_i18n">
+        </div>
+    </div>
+</div>
 
 <h3 data-anchor="field">field extension</h3>
 <p>Field</p>

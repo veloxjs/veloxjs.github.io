@@ -26,13 +26,19 @@
               name: "velox-web-view",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/33dba45151cc47cdf034a21db856e7b003d63ef3/velox-web-view.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/74e1081f9be71cb34ab1e2b1ba1931759af4a5f6/velox-web-view.js",
           },
            {
               name: "velox-web-view-dialog",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/33dba45151cc47cdf034a21db856e7b003d63ef3/ext/velox-dialogs.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/db905bd7be062c5897f3ea546a99a4f1ca6f0e03/ext/velox-dialogs.js",
+          },
+           {
+              name: "velox-web-view-i18n",
+              type: "js",
+              version: "0.0.1",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/33dba45151cc47cdf034a21db856e7b003d63ef3/ext/velox-i18next.js",
           },
            {
               name: "velox-controller",
@@ -93,47 +99,53 @@
             }
           })
 
-          var app = new VeloxAppController() ;
-          VeloxViewController.setDefaultContainerParent("container") ;
+         VeloxWebView.i18n.configure({}, function(err){
+            if(err){ 
+                return VeloxWebView.error(err);
+            }
 
-          new VeloxWebView("views/header", "header", {container: "header"}).open({
-            modules : [
-              {name: "View", icon: "paint-brush"},
-              {name: "Controller", icon: "gamepad"},
-              {name: "API", icon: "database"}
-            ]
-          })
+            var app = new VeloxAppController() ;
+            VeloxViewController.setDefaultContainerParent("container") ;
+
+            new VeloxWebView("views/header", "header", {container: "header"}).open({
+              modules : [
+                {name: "View", icon: "paint-brush"},
+                {name: "Controller", icon: "gamepad"},
+                {name: "API", icon: "database"}
+              ]
+            })
 
 
 
-          app.registerController(new VeloxViewController({
-            directory : "views/welcome",
-            name: "welcome",
-            route: ""
-          }))
+            app.registerController(new VeloxViewController({
+              directory : "views/welcome",
+              name: "welcome",
+              route: ""
+            }))
 
-          app.registerController(new VeloxViewController({
-            directory : "views/why",
-            name: "why",
-            route: "why"
-          }))
-          app.registerController(new VeloxViewController({
-            directory : "views/view",
-            name: "view",
-            route: "view"
-          }))
-          app.registerController(new VeloxViewController({
-            directory : "views/controller",
-            name: "controller",
-            route: "controller"
-          }))
-          app.registerController(new VeloxViewController({
-            directory : "views/api",
-            name: "api",
-            route: "api"
-          }))
+            app.registerController(new VeloxViewController({
+              directory : "views/why",
+              name: "why",
+              route: "why"
+            }))
+            app.registerController(new VeloxViewController({
+              directory : "views/view",
+              name: "view",
+              route: "view"
+            }))
+            app.registerController(new VeloxViewController({
+              directory : "views/controller",
+              name: "controller",
+              route: "controller"
+            }))
+            app.registerController(new VeloxViewController({
+              directory : "views/api",
+              name: "api",
+              route: "api"
+            }))
 
-          app.navigate() ;
+            app.navigate() ;
+          }) ;
         }) ;
 
       }) ;
