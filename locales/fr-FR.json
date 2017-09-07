@@ -2,5 +2,24 @@
     "hello": {
         "world": "Bonjour tout le monde",
         "langChanged": "Vous avez choisi {{chosenLang}}"
+    },
+    "global": {
+        "yes": "Oui",
+        "no": "Non"
+    },
+    "fields": {
+        "person": {
+            "name": "Nom",
+            "status": "Statut"
+        },
+        "values" : {
+            "person": {
+                "status": {
+                    "hello_todo": "Doit dire bonjour",
+                    "hello_done": "A dit bonjour",
+                    "hello_missed": "Manqué"
+                }
+            }
+        }
     }
 }

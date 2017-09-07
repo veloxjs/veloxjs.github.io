@@ -309,8 +309,65 @@
                 {container: view.EL.example_hello_fields_deco} 
             ) ;
             v.open() ;
+
+            (function example_hello_schema(){
+                var schema = {
+                    person : {
+                        columns: [
+                            {name: "name", type: "text", size: 10},
+                            {name: "status", type:"select", values: ["hello_todo", "hello_done", "hello_missed"]}
+                        ]
+                    }
+                }
+                VeloxWebView.fieldsSchema.configure({
+                    schema: schema,
+                    //automatically add label to fields
+                    addLabelToFields : true
+                }) ;
+                                
+                var v = new VeloxWebView(
+                    "examples", //folder in which the HTML view file is located
+                    "hello_schema", //name of the HTML view file
+                    {container: view.EL.example_hello_schema} 
+                ) ;
+                var persons = [
+                    { name: "Bob", status: "hello_todo"},
+                    { name: "Alice", status: "hello_done"}
+                ]
+                v.open({currentPerson : persons[0], persons: persons}) ;
+            })() ;
         }) ;
     })() ;
+    
+
+    VeloxWebView.registerExtension({
+        name:"stars",
+        init: function(){
+            var view = this ;
+            view.elementsHavingAttribute("data-stars").forEach(function(el){
+                var starsNumber = parseInt(el.getAttribute("data-stars"), 10) ;
+                var stars = [] ;
+                for(var i=0; i<5; i++){
+                    if(i<starsNumber){
+                        stars.push('<i class="fa fa-star"></i>') ;
+                    }else{
+                        stars.push('<i class="fa fa-star-o"></i>') ;
+                    }
+                }
+                el.innerHTML = stars.join(" ") ;
+            }) ;
+        }
+    }) ;
+
+    (function example_hello_stars(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_stars", //name of the HTML view file
+            {container: view.EL.example_hello_stars} 
+        ) ;
+        v.open() ;
+    })() ;
+    
     
     
 </script>
@@ -1083,52 +1140,143 @@ view.open() ;
 
 <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <pre data-dont-process><div class="code-legend">examples/hello_fields_schema.html</div><code class="html">
-<div data-field-def="person.name"></div>
-<div data-field-def="person.status"></div>
+            <pre data-dont-process><div class="code-legend">examples/hello_schema.html</div><code class="html">
+<script>
+view.EL.grid.addEventListener("select", function(ev){
+    view.getBoundObject().currentPerson = ev.record ;
+    view.render() ;
+}) ;
+view.EL.name.addEventListener("keyup", function(ev){
+    view.updateData();
+    view.render() ;
+}) ;
+view.EL.status.addEventListener("change", function(ev){
+    //if rendering ignore, it is not a change from user
+    if(view.rendering){ return; }
+    view.updateData();
+    view.render() ;
+}) ;
+</script>
+
+<div data-field-def="person.name" 
+    data-bind="currentPerson.name" 
+    id="name"></div>
+<div data-field-def="person.status" 
+    data-bind="currentPerson.status" 
+    id="status"></div>
+<div data-field-def="person.grid" 
+    style="height: 100px" 
+    data-bind="persons" 
+    id="grid"></div>
     </code></pre>
     
-            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">
-VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
-    if(fieldType === "select"){
-        //for select, just add form-group class
-        element.classList.add("form-group") ;
-        return ;
-    }
-    if(fieldType === "upload" || fieldType === "pdf"){
-        return; //do nothing on upload and pdf fields
-    }
-    var input = element.getElementsByTagName("input")[0] ;
-    if(input){
-        //add boostrap form input control classes
-        if(input.type === "checkbox"){
-            element.className += " checkbox" ;
-        }else{
-            element.className += " form-group" ;
-            input.className += " form-control" ;
+<pre data-dont-process><div class="code-legend">locales/en-US.json</div><code class="javascript">
+{
+    "fields": {
+        "person": {
+            "name": "Name",
+            "status": "Status"
+        },
+        "values" : {
+            "person": {
+                "status": {
+                    "hello_todo": "Must say hello",
+                    "hello_done": "Said hello",
+                    "hello_missed": "Missed"
+                }
+            }
         }
-    }else{
-        //by default add the form-group class
-        element.className += " form-group" ;
     }
-
+}
+</code></pre>
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">
+var schema = {
+    person : {
+        columns: [
+            {name: "name", type: "text", size: 10},
+            {name: "status", type:"select", values: 
+                ["hello_todo", "hello_done", "hello_missed"]}
+        ]
+    }
+}
+VeloxWebView.fieldsSchema.configure({
+    schema: schema,
+    //automatically add label to fields
+    addLabelToFields : true
 }) ;
+                
 var view = new VeloxWebView(
     "examples", //folder in which the HTML view file is located
-    "hello_fields_deco", //name of the HTML view file
-    {container: "example_hello_fields_deco"} 
+    "hello_schema", //name of the HTML view file
+    {container: "example_hello_schema"} 
 ) ;
 view.open() ;
     </code></pre>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="example-result" id="example_hello_fields_deco">
+            <div class="example-result" id="example_hello_schema">
             </div>
         </div>
     </div>
 
-<h3 data-anchor="extension">create extension</h3>
-<p>Highlight example</p>
+<h3 data-anchor="extension">Create extension</h3>
+<p>We just seen some officials extensions but it is also quite easy to create your custom extension</p>
+<p>This example show you a simple extension that give you a small stars widget using <a href="http://fontawesome.io/">FontAwesome</a> icons</p>
+
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_stars.html</div><code class="html">
+<div data-stars="3"></div>
+<div data-stars="5"></div>
+<div data-stars="1"></div>
+<div data-stars="0"></div>
+    </code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">
+VeloxWebView.registerExtension({
+name:"stars",
+init: function(){
+    //this function is called on the
+    //view object so "this" is the view
+    var view = this ;
+    view.elementsHavingAttribute("data-stars")
+        .forEach(function(el){
+
+        var starsNumber = parseInt(
+            el.getAttribute("data-stars"), 10) ;
+        var stars = [] ;
+        for(var i=0; i < 5; i++){
+            if(i < starsNumber){
+
+                stars.push(
+                    '<i class="fa fa-star"></i>') ;
+
+            }else{
+
+                stars.push(
+                    '<i class="fa fa-star-o"></i>') ;
+
+            }
+        }
+        el.innerHTML = stars.join(" ") ;
+    }) ;
+}
+}) ;
+
+var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_stars", //name of the HTML view file
+    {container: "example_hello_stars"} 
+) ;
+view.open() ;
+
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_stars">
+            </div>
+        </div>
+    </div>
 
 <h3 data-anchor="real">Real world usage</h3>
 <p>This website use the view system !</p>

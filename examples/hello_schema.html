@@ -1,0 +1,19 @@
+<script>
+    view.EL.grid.addEventListener("select", function(ev){
+        view.getBoundObject().currentPerson = ev.record ;
+        view.render() ;
+    }) ;
+    view.EL.name.addEventListener("keyup", function(ev){
+        view.updateData();
+        view.render() ;
+    }) ;
+    view.EL.status.addEventListener("change", function(ev){
+        //if rendering ignore, it is not a change from user
+        if(view.rendering){ return; }
+        view.updateData();
+        view.render() ;
+    }) ;
+</script>
+<div data-field-def="person.name" data-bind="currentPerson.name" id="name"></div>
+<div data-field-def="person.status" data-bind="currentPerson.status" id="status"></div>
+<div data-field-def="person.grid" style="height: 100px" data-bind="persons" id="grid"></div>

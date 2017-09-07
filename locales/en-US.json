@@ -2,5 +2,24 @@
     "hello": {
         "world": "Hello World",
         "langChanged": "You choose {{chosenLang}}"
+    },
+    "global": {
+        "yes": "Yes",
+        "no": "No"
+    },
+    "fields": {
+        "person": {
+            "name": "Name",
+            "status": "Status"
+        },
+        "values" : {
+            "person": {
+                "status": {
+                    "hello_todo": "Must say hello",
+                    "hello_done": "Said hello",
+                    "hello_missed": "Missed"
+                }
+            }
+        }
     }
 }
