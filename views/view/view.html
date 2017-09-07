@@ -271,7 +271,48 @@
             VeloxWebView.info(VeloxWebView.tr("hello.langChanged", {chosenLang : data.lang})) ;
         }) ;
     })() ;
+    
+    (function example_hello_fields(){
+        var v = new VeloxWebView(
+            "examples", //folder in which the HTML view file is located
+            "hello_fields", //name of the HTML view file
+            {container: view.EL.example_hello_fields} 
+        ) ;
+        v.open(function(){
+            VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
+                if(fieldType === "select"){
+                    //for select, just add form-group class
+                    element.classList.add("form-group") ;
+                    return ;
+                }
+                if(fieldType === "upload" || fieldType === "pdf"){
+                    return; //do nothing on upload and pdf fields
+                }
+                var input = element.getElementsByTagName("input")[0] ;
+                if(input){
+                    //add boostrap form input control classes
+                    if(input.type === "checkbox"){
+                        element.className += " checkbox" ;
+                    }else{
+                        element.className += " form-group" ;
+                        input.className += " form-control" ;
+                    }
+                }else{
+                    //by default add the form-group class
+                    element.className += " form-group" ;
+                }
 
+            }) ;
+            var v = new VeloxWebView(
+                "examples", //folder in which the HTML view file is located
+                "hello_fields_deco", //name of the HTML view file
+                {container: view.EL.example_hello_fields_deco} 
+            ) ;
+            v.open() ;
+        }) ;
+    })() ;
+    
+    
 </script>
 <h1>View</h1>
 <h2>Introduction</h2>
@@ -876,11 +917,215 @@ view.on("lang", function(){
     </div>
 </div>
 
-<h3 data-anchor="field">field extension</h3>
-<p>Field</p>
+<h3 data-anchor="field">Field extension</h3>
+<p>In web application, we often need input field of various type of data</p>
+<p>This example show you how the field extension helps you to get hight quality fields in your forms</p>
+<p>This extension uses <a href="https://github.com/RobinHerbots/Inputmask" target="_blank">Inputmask</a>, 
+    <a href="http://numbrojs.com/" target="_blank">numbro</a> (only for old navigator), 
+    <a href="https://github.com/MikeMcl/decimal.js/" target="_blank">decimal.js</a>, 
+    <a href="https://chmln.github.io/flatpickr/" target="_blank">flatpickr</a>, 
+    <a href="https://momentjs.com/" target="_blank">moment.js</a> (fetch language data only, not the whole lib), 
+    <a href="https://selectize.github.io/selectize.js/" target="_blank">selectize</a>, 
+    <a href="http://w2ui.com" target="_blank">w2ui</a>, 
+    <a href="https://pdfobject.com/" target="_blank">PDFObject</a> and 
+    <a href="https://mozilla.github.io/pdf.js/" target="_blank">PDF.js</a> (only for browser not supporting embed PDF)</p>
 
-<h3 data-anchor="schema">field schema extension</h3>
-<p>Schema</p>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_fields.html</div><code class="html">
+<p>Masked input : <span data-field="text" data-field-mask="(999) 999-9999"></span></p>
+<p>Integer : <span data-field="int"></span></p>
+<p>Double : <span data-field="double"></span></p>
+<p>Percent : <span data-field="percent"></span></p>
+<p>Email : <span data-field="email"></span></p>
+<p>Date : <span data-field="date"></span></p>
+<p>Date & time : <span data-field="datetime"></span></p>
+<p>Select : 
+<span data-field="select">
+<select>
+    <option value="js">Javascript</option>
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+</select>
+</span>
+</p>
+<p>Checkbox : <span data-field="checkbox"></span></p>
+<p>Toggle : <span data-field="toggle"></span></p>
+<p>Upload : <span data-field="upload"></span></p>
+<div>Grid :  
+<div data-field="grid" style="height: 100px">
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th data-field-type="double">Height</th>
+        <th data-field-type="date">Date of birth</th>
+        <th data-field-name="status">
+            <label>Status</label>
+            <script>
+                //custom cell rendering
+                var color= "white"
+                if(record.status === "hello_done"){
+                    color= "green" ;
+                }else if(record.status === "hello_todo"){
+                    color= "red" ;
+                }else if(record.status === "hello_missed"){
+                    color= "grey" ;
+                }
+                return '<span style="color: '+color+'">'+record.status+"</span>" ;
+            </script>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Bob</td>
+            <td>1.82</td>
+            <td>1973-02-23</td>
+            <td>hello_done</td>
+        </tr>
+        <tr>
+            <td>Alice</td>
+            <td>1.69</td>
+            <td>1979-08-12</td>
+            <td>hello_todo</td>
+        </tr>
+        <tr>
+            <td>John</td>
+            <td>1.78</td>
+            <td>1984-05-02</td>
+            <td>hello_missed</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+</div>
+<div>PDF :
+    <div style="width: 100%; height: 100px" data-field="pdf" data-field-pdfurl="pdf/Edgar+Allan+Poe+-+The+Murders+in+the+Rue+Morgue.pdf"></div>
+</div>
+    </code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_fields", //name of the HTML view file
+    {container: "example_hello_fields"} 
+    ) ;
+    view.open() ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_fields">
+            </div>
+        </div>
+    </div>
+
+<p>Generate field automatically is great but we loose the hability to customize look and feel of generated field</p>
+<p>To address this issue, you can use decorator to customize the generated fields</p>
+<p>Here is an example to apply bootstrap classes on fields</p>
+
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_fields_deco.html</div><code class="html">
+<p>Masked input : <span data-field="text" data-field-mask="(999) 999-9999"></span></p>
+<p>Select : 
+<span data-field="select">
+<select>
+    <option value="js">Javascript</option>
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+</select>
+</span>
+</p>
+    </code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">
+VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
+    if(fieldType === "select"){
+        //for select, just add form-group class
+        element.classList.add("form-group") ;
+        return ;
+    }
+    if(fieldType === "upload" || fieldType === "pdf"){
+        return; //do nothing on upload and pdf fields
+    }
+    var input = element.getElementsByTagName("input")[0] ;
+    if(input){
+        //add boostrap form input control classes
+        if(input.type === "checkbox"){
+            element.className += " checkbox" ;
+        }else{
+            element.className += " form-group" ;
+            input.className += " form-control" ;
+        }
+    }else{
+        //by default add the form-group class
+        element.className += " form-group" ;
+    }
+
+}) ;
+var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_fields_deco", //name of the HTML view file
+    {container: "example_hello_fields_deco"} 
+) ;
+view.open() ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_fields_deco">
+            </div>
+        </div>
+    </div>
+
+<h3 data-anchor="schema">Field schema extension</h3>
+<p>On application that use a lot of fields, it is handy to define all fields at one place and then be sure to reuse exactly the same field on all screen</p>
+<p>No more worry to check all HTML files when you decided to change the max length of a text field</p>
+
+<div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <pre data-dont-process><div class="code-legend">examples/hello_fields_schema.html</div><code class="html">
+<div data-field-def="person.name"></div>
+<div data-field-def="person.status"></div>
+    </code></pre>
+    
+            <pre data-dont-process><div class="code-legend">javascript</div><code class="javascript">
+VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
+    if(fieldType === "select"){
+        //for select, just add form-group class
+        element.classList.add("form-group") ;
+        return ;
+    }
+    if(fieldType === "upload" || fieldType === "pdf"){
+        return; //do nothing on upload and pdf fields
+    }
+    var input = element.getElementsByTagName("input")[0] ;
+    if(input){
+        //add boostrap form input control classes
+        if(input.type === "checkbox"){
+            element.className += " checkbox" ;
+        }else{
+            element.className += " form-group" ;
+            input.className += " form-control" ;
+        }
+    }else{
+        //by default add the form-group class
+        element.className += " form-group" ;
+    }
+
+}) ;
+var view = new VeloxWebView(
+    "examples", //folder in which the HTML view file is located
+    "hello_fields_deco", //name of the HTML view file
+    {container: "example_hello_fields_deco"} 
+) ;
+view.open() ;
+    </code></pre>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="example-result" id="example_hello_fields_deco">
+            </div>
+        </div>
+    </div>
 
 <h3 data-anchor="extension">create extension</h3>
 <p>Highlight example</p>
