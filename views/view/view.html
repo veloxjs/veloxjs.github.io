@@ -311,19 +311,7 @@
             v.open() ;
 
             (function example_hello_schema(){
-                var schema = {
-                    person : {
-                        columns: [
-                            {name: "name", type: "text", size: 10},
-                            {name: "status", type:"select", values: ["hello_todo", "hello_done", "hello_missed"]}
-                        ]
-                    }
-                }
-                VeloxWebView.fieldsSchema.configure({
-                    schema: schema,
-                    //automatically add label to fields
-                    addLabelToFields : true
-                }) ;
+                
                                 
                 var v = new VeloxWebView(
                     "examples", //folder in which the HTML view file is located

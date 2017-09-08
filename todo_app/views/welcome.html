@@ -1,0 +1,120 @@
+<style>
+    .todo-project-line {
+        border: 1px #3897aa solid;
+        border-radius: 3px;
+        margin: 20px 40px;
+        padding: 10px;
+    }
+
+    .todo-project-line label {
+        font-size: 11pt;
+        font-weight: normal;
+    }
+
+    .todo-block {
+        color: white;
+        border-radius: 3px;
+        height: 160px;
+        padding: 5px 10px;
+    }
+
+    .todo-todo-block {
+        background: #fc3927;
+    }
+
+    .todo-inprogress-block {
+        background: #3897aa;
+    }
+
+    .todo-done-block {
+        background: #3fc95d;
+    }
+
+    .block-legend {
+        position: absolute;
+        text-transform: uppercase;
+        font-weight: bold;
+        opacity: .5;
+        transform: rotate(270deg);
+        transform-origin: 5px 14px;
+        bottom: 0;
+        color: #dedede;
+    }
+
+    .todo-task {
+        background: rgba(255, 255, 255, 0.41);
+        padding: 5px 10px;
+        border-radius: 3px;
+        margin: 10px 0px;
+        cursor: move;
+    }
+    .todo-task > * {
+        cursor: move;
+    }
+</style>
+<script>
+    var allowDrop = function(e) {
+        e.preventDefault();
+    }
+
+    var onDragStart = function(ev){
+        //the dragged element is a task, the bound object is the task object
+        //the view system give you access to the element attached view in the HTML event
+        var task = ev.viewOfElement.getBoundObject() ;
+        //save data in drag & drop data
+        ev.dataTransfer.setData("id", task.id);
+        ev.dataTransfer.setData("status", task.status);
+    }
+    
+    var onDrop = function(ev){
+        //the bound object of the drop target element is a project object
+        //the view system give you access to the element attached view in the HTML event
+        var project = ev.viewOfElement.getBoundObject() ;
+
+        //get data from drag data and markup
+        var taskId = ev.dataTransfer.getData("id");
+        var taskStatus = ev.dataTransfer.getData("status");
+        var targetStatus = ev.target.getAttribute("data-target-status") ;
+
+        //emit an event to the controller which will do what it has to do
+        view.emit("changeStatus", {taskId: taskId, fromStatus: taskStatus, toStatus: targetStatus, project: project}) ;
+    }
+
+    view.EL.blockTodo.addEventListener("dragover", allowDrop) ;
+    view.EL.blockInProgress.addEventListener("dragover", allowDrop) ;
+    view.EL.blockDone.addEventListener("dragover", allowDrop) ;
+
+    view.EL.taskTodo.addEventListener("dragstart", onDragStart) ;
+    view.EL.taskInProgress.addEventListener("dragstart", onDragStart) ;
+    view.EL.taskDone.addEventListener("dragstart", onDragStart) ;
+
+    view.EL.blockTodo.addEventListener("drop", onDrop) ;
+    view.EL.blockInProgress.addEventListener("drop", onDrop) ;
+    view.EL.blockDone.addEventListener("drop", onDrop) ;
+</script>
+<div class="row todo-project-line" data-bind="projects[]">
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div><label data-bind="name"></label></div>
+        <button class="btn btn-primary" data-i18n="todo.createTask" id="createTask" data-emit></button>
+    </div>
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" >
+            <div class="todo-todo-block todo-block" id="blockTodo" data-target-status="todo">
+                <div class="block-legend" data-i18n="fields.values.task.status.todo"></div>
+                <div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <div class="todo-inprogress-block todo-block" id="blockInProgress" data-target-status="inprogress">
+                <div class="block-legend" data-i18n="fields.values.task.status.inprogress"></div>
+                <div data-bind="inprogress[]" data-view="oneTask" draggable="true" id="taskInProgress"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <div class="todo-done-block todo-block" id="blockDone" data-target-status="done">
+                <div class="block-legend" data-i18n="fields.values.task.status.done"></div>
+                <div data-bind="done[]" data-view="oneTask" draggable="true" id="taskDone"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,22 +4,49 @@
         "langChanged": "Vous avez choisi {{chosenLang}}"
     },
     "global": {
-        "yes": "Oui",
-        "no": "Non"
+        "unexpectedError": "Un erreur inattendue s'est produite, veuillez envoyer l'erreur suivante à votre support technique : \n {{err}}"
+    },
+    "form": {
+        "back": "Retour",
+        "create": "Créer",
+        "modify": "Modifier",
+        "delete": "Supprimer",
+        "confirmDelete": "Voulez-vous vraiment supprimer cet élément ?",
+        "validate": "Valider",
+        "cancel": "Annuler"
     },
     "fields": {
+        "table": {
+            "task": "Tâche"
+        },
         "person": {
             "name": "Nom",
             "status": "Statut"
         },
-        "values" : {
+        "task":{
+            "name": "Nom",
+            "projectId": "Projet",
+            "status": "Statut"
+        },
+        "values": {
             "person": {
                 "status": {
                     "hello_todo": "Doit dire bonjour",
                     "hello_done": "A dit bonjour",
                     "hello_missed": "Manqué"
                 }
+            },
+            "task":{
+                "status":{
+                    "todo": "À faire",
+                    "done": "Fait",
+                    "inprogress": "En cours"
+                }
             }
         }
+    },
+    "todo": {
+        "taskTable": "Table des tâches",
+        "createTask" : "Créer une tâche"
     }
 }

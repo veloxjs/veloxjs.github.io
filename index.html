@@ -26,43 +26,61 @@
               name: "velox-web-view",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/c5fc09ac148879f0e37deb339bb828a18fd71bd6/velox-web-view.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/velox-web-view.js",
           },
            {
               name: "velox-web-view-dialog",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/db905bd7be062c5897f3ea546a99a4f1ca6f0e03/ext/velox-dialogs.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-dialogs.js",
           },
            {
               name: "velox-web-view-i18n",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/33dba45151cc47cdf034a21db856e7b003d63ef3/ext/velox-i18next.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-i18next.js",
           },
            {
               name: "velox-web-view-fields",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/1df8ce19941f5a2f5cd1867b9d4c24a4bde1a797/ext/velox-fields.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-fields.js",
           },
            {
               name: "velox-web-view-fields-schema",
               type: "js",
               version: "0.0.1",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/53af8ffb9d7ca78f78612bc244f84eafb0f7a66c/ext/velox-fields-schema.js",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-view/0d203c9e103cbe92a4650bec0c7b7eb9d39798d4/ext/velox-fields-schema.js",
           },
            {
               name: "velox-controller",
               type: "js",
               version: "0.0.1a",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/4f48a51ff56cef8b43284805340f9f2044964687/velox-app-controller.js"
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/82d7b847235fb72dd83150dd3ea41ceca2f1c68b/velox-app-controller.js"
           },
            {
               name: "velox-controller-view",
               type: "js",
               version: "0.0.1a",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/4f48a51ff56cef8b43284805340f9f2044964687/velox-view-controller.js"
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/926e620de8cc4c5d976c699003a3c76295f65eaa/velox-view-controller.js"
+          },
+           {
+              name: "velox-controller-grid",
+              type: "js",
+              version: "0.0.1a",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/16151731962a424251f94174b92107c5e69c529f/velox-form-controller.js"
+          },
+           {
+              name: "velox-controller-form",
+              type: "js",
+              version: "0.0.1a",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/16151731962a424251f94174b92107c5e69c529f/velox-grid-controller.js"
+          },
+           {
+              name: "velox-controller-grid-and-form",
+              type: "js",
+              version: "0.0.1a",
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/9ee2870cdc492403d851966f42a209c85bd56e90/velox-grid-and-form-controller.js"
           }
           ]
         , function(){
@@ -112,6 +130,35 @@
             }
           })
 
+
+          var schema = {
+              person : {
+                  columns: [
+                      {name: "name", type: "text", size: 10},
+                      {name: "status", type:"select", values: ["hello_todo", "hello_done", "hello_missed"]}
+                  ]
+              },
+              project: {
+                  columns : [
+                      {name: "name", type: "text"},
+                  ]
+              },
+              task: {
+                  columns : [
+                      {name: "id", autoGen: "uuid", type: "text"},
+                      {name: "name", type: "text"},
+                      {name: "status", type: "select", values: ["todo", "done", "inprogress"]},
+                      {name: "projectId", type: "select", values: {"1": "Create a JS Framework", "2": "Save the world"}}
+                  ],
+                  pk: ["id"]
+              },
+          }
+          VeloxWebView.fieldsSchema.configure({
+              schema: schema,
+              //automatically add label to fields
+              addLabelToFields : true
+          }) ;
+
          VeloxWebView.i18n.configure({}, function(err){
             if(err){ 
                 return VeloxWebView.error(err);
@@ -158,6 +205,10 @@
             }))
 
             app.navigate() ;
+
+            veloxScriptLoader.loadScript("todo_app/todo_app.js", function(){
+              new TodoApp() ;
+            }) ;
           }) ;
         }) ;
 

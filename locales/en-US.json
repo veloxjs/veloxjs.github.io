@@ -3,13 +3,31 @@
         "world": "Hello World",
         "langChanged": "You choose {{chosenLang}}"
     },
-    "global": {
+    "global":{
+        "unexpectedError": "An unexpected error happens, please report the following error to your technical support : \n {{err}}",
         "yes": "Yes",
         "no": "No"
     },
+    "form": {
+        "back": "Back",
+        "create": "Create",
+        "modify": "Modify",
+        "delete": "Delete",
+        "confirmDelete" : "Are you sure to delete this element ?",
+        "validate" : "Validate",
+        "cancel": "Cancel"
+    },
     "fields": {
+        "table": {
+            "task": "Task"
+        },
         "person": {
             "name": "Name",
+            "status": "Status"
+        },
+        "task":{
+            "name": "Name",
+            "projectId": "Project",
             "status": "Status"
         },
         "values" : {
@@ -19,7 +37,18 @@
                     "hello_done": "Said hello",
                     "hello_missed": "Missed"
                 }
+            },
+            "task":{
+                "status":{
+                    "todo": "Todo",
+                    "done": "Done",
+                    "inprogress": "In progress"
+                }
             }
         }
+    },
+    "todo": {
+        "taskTable": "Task table",
+        "createTask" : "Create a task"
     }
 }

@@ -1,0 +1,19 @@
+<table>
+    <tr>
+        <th data-field-name="name"></th>
+        <th data-field-name="projectId"></th>
+        <th data-field-name="status">
+            <script>
+                var color = "black" ;
+                if(record.status === "todo"){
+                    color = "#fc3927" ;
+                } else if(record.status === "inprogress"){
+                    color = "#3897aa" ;
+                } else if(record.status === "done"){
+                    color = "#3fc95d" ;
+                }
+                return '<span style="color:'+color+'">'+VeloxWebView.tr("fields.values.task.status."+record.status)+'</span>' ;
+            </script>
+        </th>
+    </tr>
+</table>
