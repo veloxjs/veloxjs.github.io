@@ -1,0 +1,295 @@
+<h2>Main view and its menu</h2>
+
+<p>
+    The main view of our example is the view that contains the top menu 
+    and places to display other views below.
+</p>
+<p>
+    Its markup is defined as following :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/main.html</div><code class="html">
+<style>
+    .nav-lang{
+        width: 200px
+    }
+
+    #todo_tasks {
+        height: 400px;
+    }
+</style>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" id="home" data-emit>Todo Demo</a>
+        </div>
+    
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li><a id="menuTask" data-emit data-i18n="todo.taskTable"></a></li>
+        </ul>
+        <form class="navbar-form navbar-right nav-lang">
+            <div data-field="select" id="lang" data-bind="lang" data-emit="change">
+                <select>
+                    <option value="en-US">English</option>
+                    <option value="fr-FR">Français</option>
+                </select>
+            </div>
+        </form>
+        </div>
+    </div>
+</nav>
+<div id="##todo_contents">
+
+</div>
+<div id="##todo_tasks">
+
+</div>
+</code></pre>
+<p>
+    On the top, we see some basic styling options.
+</p>
+<p>
+    The menu part, is an classical bootstrap 3 nav bar, we can noticed a few elements :
+</p>
+<p>
+    The navbrand has <code>data-emit</code> attribute :
+</p>
+<pre data-dont-process><code class="html"><a class="navbar-brand" id="home" data-emit>Todo Demo</a>
+</code></pre>
+<p>
+    On menuTask, we also see a <code>data-emit</code> and the <code>data-i18n</code> translation attribute :
+</p>
+<pre data-dont-process><code class="html"><a id="menuTask" data-emit data-i18n="todo.taskTable"></a>
+</code></pre>
+<p>
+    The lang element has some new elements we didn't see before :
+</p>
+<pre data-dont-process><code class="html"><div data-field="select" id="lang" data-bind="lang" data-emit="change">
+    <select>
+        <option value="en-US">English</option>
+        <option value="fr-FR">Français</option>
+    </select>
+</div>
+</code></pre>
+<p>
+    First the <code>select</code> is inside a <code>data-field="select"</code> element. 
+    This will activate the field extension that will transform the HTML select into a selectize widget
+</p>
+<p>
+    As usual, this is an extension, if you don't want that, don't use it.
+</p>
+<p>
+    Second point, the field is bound to the lang attribue (<code>data-bind="lang"</code>).
+</p>
+<p>
+    Last point, the field has a <code>data-emit="change"</code> attribute. We already seen the <code>data-emit</code> 
+    a couple of times before and saw that it emits an event on click on the element. By precising a value "change" to it
+    we will trigger the event on "change" event instead of "click".
+</p>
+<p>
+    The last 2 elements of the view are : 
+</p>
+<pre data-dont-process><code class="html"><div id="##todo_contents">
+
+</div>
+<div id="##todo_tasks">
+
+</div>
+</code></pre>
+<p>
+    The unusual point on this 2 divs is that the ids has an hash on the beggining. We saw previously that ids are the only thing
+    that VeloxJS view system change in your markup. By putting an hash on the beggining of the id, you say to VeloxJS view that
+    it should not manage this id and let it have this id.
+</p>
+<p>
+    The generated markup will be : 
+</p>
+<pre data-dont-process><code class="html"><div id="todo_contents">
+
+</div>
+<div id="todo_tasks">
+
+</div>
+</code></pre>
+<p>
+    We need that because these elements will be used as container of the other views and we want them to have a fixed id.
+</p>
+<p>
+    Now we saw the markup view, let's see the controller code
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+var todoMainController = new VeloxViewController({
+    directory : "todo_app/views",
+    name: "main",
+    route: "",
+    container: "todo_app"
+}) ;
+
+
+todoMainController.prepareDataOnEnter = function(){
+    return {
+        lang: VeloxWebView.i18n.getLang() 
+    };
+};
+
+todoMainController.onLang = function(){
+    this.view.updateData(); 
+    VeloxWebView.i18n.setLang(this.data.lang) ;
+} ;
+
+todoMainController.onMenuTask = function(){
+    this.navigate("task/list") ;
+} ;
+
+todoMainController.onHome = function(){
+    this.navigate("/") ;
+} ;
+
+
+todoMainController.stack = function(){
+    //never stack the main view because its contains others
+} ;
+</code></pre>
+<p>
+    The first declaration create a new <code>VeloxViewController</code>. It is a simple view controller that manage one view :
+</p>
+<pre data-dont-process><code class="javascript">var todoMainController = new VeloxViewController({
+    directory : "todo_app/views",
+    name: "main",
+    route: "",
+    container: "todo_app"
+}) ;
+</code></pre>
+<p>
+    The <code>directory</code> and <code>name</code> property define where is the view HTML file.
+</p>
+<p>
+    The <code>route</code> property defines when to display the view. As it is empty, it means that the view should be loaded be default
+</p>
+<p>
+    The <code>container</code> property give the id of the element that will contains the view (so as this is our main view controller this one is the element in which our application will be displayed)
+</p>
+<p>
+    Let's go to the next step :
+</p>
+<pre data-dont-process><code class="javascript">todoMainController.prepareDataOnEnter = function(){
+    return {
+        lang: VeloxWebView.i18n.getLang() 
+    };
+};
+</code></pre>
+<p>
+    With the function <code>prepareDataOnEnter</code> we define which data will be rendered by the view.
+    In this example, we want to render the current lang in our menu.
+</p>
+<p>
+    The <code>VeloxWebView.i18n</code> give us access to the i18n extension features in which <code>getLang()</code> 
+    give us the current lang
+</p>
+<p>
+    Go ahead to the next step :
+</p>
+<pre data-dont-process><code class="javascript">todoMainController.onLang = function(){
+    this.view.updateData(); 
+    VeloxWebView.i18n.setLang(this.data.lang) ;
+} ;
+</code></pre>
+<p>
+    We saw in the view that we emit a "lang" event when the lang select changed. 
+    By convention, the controller will bound the function <code>onXXX</code> to listen the corresponding event.
+    So the <code>onLang</code> function will be called when <code>lang</code> event is emited by the view.
+</p>
+<p>
+    We will update the data with user choice using <code>updateData()</code> and set the lang to the i18n extension which will 
+    automatically update all labels in the views
+</p>
+<p>
+    Next functions are related to the menu links :
+</p>
+<pre data-dont-process><code class="javascript"> todoMainController.onMenuTask = function(){
+    this.navigate("task/list") ;
+} ;
+
+todoMainController.onHome = function(){
+    this.navigate("/") ;
+} ; 
+</code></pre>
+<p>
+    We see that on click to the menu buttons, we do some navigation. This is how the view navigation is managed in VeloxJS :
+</p>
+<p>
+    The VeloxJS application controller is based on the hash on the URL, let's have an example :
+</p>
+<pre data-dont-process><code class="html">https://domain.ext/file.html#foo#bar</code></pre>
+<p>
+    This URL has 2 hash : <code>#foo</code> and <code>#bar</code>. For VeloxJS application controller 
+    these are 2 routes of controllers to call.
+</p>
+<p>
+    A controller should react to 4 event type : 
+    <ol>
+        <li>enter : the route has been added to the URL. 
+            <br/>For example, when load <code>file.html#foo</code> the enter listener of route <code>foo</code> is called</code></li>
+        <li>stack : the route has been put on the stack as another route has been added to it.
+            <br />For example, when load <code>file.html#foo#bar</code> the stack listener of route <code>foo</code> is called</code></li>
+        </li>
+        <li>unstack : the route is on the top again.
+            <br />For example, go back to <code>file.html#foo</code> the unstack listener of route <code>foo</code> is called</code></li>
+        </li>
+        <li>leave : the route is removed from the URL
+            <br />For example, when back to <code>file.html</code> the leave listener of route <code>foo</code> is called</code></li>
+        </li>
+    </ol>
+    On a <code>VeloxViewController</code>, the default behaviour is : 
+    <ul>
+        <li>enter : open the view</li>
+        <li>stack : hide the view</li>
+        <li>unstack : show the view</li>
+        <li>leave : close the view</li>
+    </ul>
+</p>
+<p>
+    Please note that VeloxJS application controller and VeloxJS view are 2 separated component. 
+    You can use VeloxJS view system with your own controller system or the VeloxJS controller system with you own view system
+</p>
+<p>
+    When our main controller call : 
+</p>
+<pre data-dont-process><code class="javascript"> this.navigate("task/list") ;</code> </pre>
+<p>
+    The route <code>#task/list</code> is added to the URL and this will trigger the loading of the task list controller that is registered at this route
+</p>
+<p>
+    By default the <code>navigate()</code> function append a relative route path to the url. 
+    You can use <code>..</code> to go to the parent route or <code>/</code> to go back the root :
+</p>
+<pre data-dont-process><code class="javascript"> this.navigate("/") ;</code> </pre>
+<p>
+    This is typically the "home" button that go back to the first controller state
+</p>
+<p>
+    No let's see the last one :
+</p>
+<pre data-dont-process><code class="javascript"> todoMainController.stack = function(){
+    //never stack the main view because its contains others
+} ;
+</code> </pre>
+<p>
+    We saw previously that the route of this main controller is <code>""</code> which that mean that it is the first root controller that
+    is displayed when no other route is active. (the <code>""</code> route is always active).
+</p>
+<p>
+    But we saw that the default behaviour of a VeloxViewController is to hide when the route is stacked. 
+    But in the case of this main controller we don't want to hide it because we want to always keep our menu visible.
+</p>
+<p>
+    That's why, we override the default behaviour to avoid hiding on stack.
+</p>
+
+    

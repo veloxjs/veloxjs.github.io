@@ -1,0 +1,210 @@
+<h2>CRUD views</h2>
+<p>
+    A screen pattern that you see very often when you create applications is the CRUD (Create, Read, Update, Delete) screens.
+    In some professionnal application, it is often 90% of the application screens that are about search in a list, open a record and modify it.
+</p>
+<p>
+    As VeloxJS aims to ease developer painful workload, it provide a simple way to quickly create list + CRUD form controller
+</p>
+<p>
+    In this example, we have this kind of interface to display the tasks. Let's look at the grid view first
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/taskGrid.html</div><code class="html">
+<table>
+    <tr>
+        <th data-field-name="name"></th>
+        <th data-field-name="projectId"></th>
+        <th data-field-name="status">
+            <script>
+                var color = "black" ;
+                if(record.status === "todo"){
+                    color = "#fc3927" ;
+                } else if(record.status === "inprogress"){
+                    color = "#3897aa" ;
+                } else if(record.status === "done"){
+                    color = "#3fc95d" ;
+                }
+                return '<span style="color:'+color+'">'+VeloxWebView.tr("fields.values.task.status."+record.status)+'</span>' ;
+            </script>
+        </th>
+    </tr>
+</table>
+</code></pre>
+<p>
+    With this simple markup, we are preparing a search grid with 3 columns: name, projectId and status
+</p>
+<p>
+    The rendering of each columns will be done accordingly to the field schema : 
+</p>
+<pre data-dont-process><code class="javascript">var schema = {
+    task: {
+        columns : [
+            {name: "id", autoGen: "uuid", type: "text"},
+            {name: "name", type: "text"},
+            {name: "status", type: "select", values: ["todo", "done", "inprogress"]},
+            {name: "projectId", type: "select", values: {"1": "Create a JS Framework", "2": "Save the world"}}
+        ],
+        pk: ["id"]
+    },
+}
+</code></pre>
+<p>
+    For the example, the projectId definition is hardcoded values. In real world example, 
+    it would be defined as a many2one database link and values loaded automatically from database
+</p>
+<p>For the status column, we want to have some custom rendering, so we can add a little script : </p>
+<pre data-dont-process><div class="code-legend">todo_app/views/taskGrid.html</div><code class="html">
+<th data-field-name="status">
+    <script>
+        var color = "black" ;
+        if(record.status === "todo"){
+            color = "#fc3927" ;
+        } else if(record.status === "inprogress"){
+            color = "#3897aa" ;
+        } else if(record.status === "done"){
+            color = "#3fc95d" ;
+        }
+        return '<span style="color:'+color+'">'+VeloxWebView.tr("fields.values.task.status."+record.status)+'</span>' ;
+    </script>
+</th>
+</code></pre>
+<p>
+    This script will be a function that is called when the cell is rendered. 
+    It receive the <code>record</code> object that is the data object of the line that is rendering
+</p>
+<p>
+    Note : if you only want to display all columns of your table without any customization, you don't even need to define a view file
+</p>
+<p>
+    Now, go to the form view :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/taskForm.html</div><code class="html">        
+<form>
+    <div data-field-def="task.projectId"></div>
+    <div data-field-def="task.name"></div>
+    <div data-field-def="task.status"></div>
+</form>
+</code></pre>
+<p>
+    This one is quite self explaining, 
+    we want to  display the 3 fields projectId, name and status that will be generated
+    accordingly to the schema definition above.
+</p>
+<p>
+    Now that we saw the simplicity of the views creation, we go the controller part :
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+var taskController = new VeloxGridAndFormController("task", { 
+    grid: {
+        directory: "todo_app/views",
+        name: "taskGrid",
+        containerParent: "todo_tasks",
+    },
+    form: {
+        directory: "todo_app/views",
+        name: "taskForm",
+        containerParent: "todo_tasks",
+        defaultData: {
+            status: "todo"
+        }
+    }   
+}) ;
+</code></pre>
+<p>
+    This is the controller definition. We give it a name (<code>task</code>) that will 
+    automatically register routes <code>task/list</code> and <code>task/form</code> 
+    (you can override them with options if you want something else).
+</p>
+<p>
+    Then, we define the grid and form views option with <code>directory</code> and <code>name</code> of the views
+    . The <code>containerParent</code> means that the container should be added to this element.
+</p>
+<p>
+    The last option is the default value of a new record when create a new task :
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+defaultData: {
+    status: "todo"
+}
+</code></pre>
+<p>
+    If you are using VeloxJS database system, this is all that you have to do to have a list/form interface on your table
+</p>
+<p>
+    For this example, we are not using database so we must manage manually the data saving :
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+taskController.gridController.searchRecords = function(callback){
+    var tasks = [] ;
+    todoData.projects.forEach(function(p){
+        p.todo.concat(p.inprogress).concat(p.done).forEach(function(t){
+            t.projectId = p.id ;
+            tasks.push(t) ;
+        }) ;
+    }) ;
+    callback(null,tasks) ;
+} ;
+
+taskController.formController.saveRecords = function(records, callback){
+    var task = records[0].record ;
+    todoData.projects.some(function(p){
+        if(p.id == task.projectId){
+            var updated = p[task.status].some(function(t){
+                if(t.id == task.id){
+                    Object.keys(task).forEach(function(k){ t[k] = task[k] ;}) ;
+                    return true ;
+                }
+            }) ;
+            if(!updated){
+                p[task.status].push(task) ;   
+            }
+            return true ;
+        }
+    }) ;
+    callback(null, task) ;
+} ;
+
+taskController.formController.deleteRecord = function(task, callback){
+    todoData.projects.some(function(p){
+        if(p.id == task.projectId){
+            p[task.status].some(function(t, i){
+                if(t.id == task.id){
+                    p[task.status].splice(i, 1) ;
+                    return true ;
+                }
+            }) ;
+            return true ;
+        }
+    }) ;
+    callback() ;
+} ;
+</code></pre>
+<p>
+    We need to implements the <code>searchRecords</code>, <code>saveRecords</code> and <code>deleteRecord</code> functions.<br />
+    All functions are obvously asynchroneous as data saving usually involve distant server interaction
+</p>
+<p>
+    The function <code>searchRecords</code> just have to return the list of item to display in the seach table
+</p>
+<p>
+    The function <code>saveRecors</code> receive a list of records to save. Why a list of record and not just one records ?<br />
+    Because, in real application, a form is often dealing with a main table record and other table related records (for example : an invoice and its line)
+    but we want to save them in the same transaction.
+</p>
+<p>
+    And the function <code>deleteRecord</code> receive the item to delete and should perform the removal
+</p>
+<p>
+    Last point : you may noticed that in the schema, the task id columns is defined as following :
+</p>
+<pre data-dont-process><code class="javascript">{name: "id", autoGen: "uuid", type: "text"}</code></pre>
+<p>
+    This means that the id of the task will be automatically generated with an uuid. 
+    This is not useful if you are using popular database id auto sequences for which your database will manage the id generation.<br />
+    But the VeloxJS database also provide you a offline sync extension to be able to use the application both
+    offline and online and proceed to automatic sync with the server database.
+    <br />
+    In this use case, the client side should be able to generate an unique id for the new records so it is prefered to generate uuid on client than id sequence on server side
+    <br />
+    But once again, VeloxJS provide you a tools box, just pick the tools you need !
+</p>

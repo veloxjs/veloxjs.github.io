@@ -24,7 +24,7 @@ todoMainController.onMenuTask = function(){
 } ;
 
 todoMainController.onHome = function(){
-    this.navigate("/") ;
+    this.navigate("/!") ;
 } ;
 
 

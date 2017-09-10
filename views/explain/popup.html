@@ -1,0 +1,114 @@
+<h2>Quick popup</h2>
+<p>
+    In our example, we saw that the button "Create a task" open a little popup to create a new task on the project
+    Let's see how it is done.
+</p>
+<p>
+    Remember, in the view, we have the button :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html">
+<button class="btn btn-primary" data-i18n="todo.createTask" id="createTask" data-emit></button>
+</code></pre>
+<p>
+    The attribute <code>data-emit</code> make it emit a event <code>createTask</code> when user click on the button.
+</p>
+<p>
+    The controller listen to the event as following : 
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+todoWelcomeController.onCreateTask = function(ev){
+    var project = ev.data.currentData ;
+    var view = new VeloxWebView(
+        {html: '<div data-field-def="task.name" id="name"></div><button class="btn btn-primary" data-emit id="validate" data-i18n="form.validate"></button>'}
+        ) ;
+    view.openInPopup({width: 200, height: 150}, function(){
+        view.EL.name.focus() ;
+    }) ;
+    view.on("validate", function(){
+        var task = view.getData() ;
+        task.id = project.todo.length+project.inprogress.length+project.done.length +1 ;
+        task.status = "todo" ;
+        project.todo.push(task) ;
+        view.closePopup() ;
+        this.view.render() ;
+    }.bind(this)) ;
+} ;
+</code></pre>
+<p>
+    The event give you access to the data bound to the view containing the HTML element that triggered the event in 
+    <code>ev.data.currentData</code>. As our button is in the project loop, the currentData is a project object :
+</p>
+<pre data-dont-process><code class="javascript">var project = ev.data.currentData ;
+</code></pre>
+<p>
+    The next line prepare the view that will be displayed in the popup :
+</p>
+<pre data-dont-process><code class="javascript">var view = new VeloxWebView(
+    {html: '<div data-field-def="task.name" id="name"></div><button class="btn btn-primary" data-emit id="validate" data-i18n="form.validate"></button>'}
+) ;
+</code></pre>
+<p>
+    As our popup is very simple, we use inline HTML string. 
+    But of course in more complex cases, you can reference an external HTML view file
+</p>
+<p>
+    An interesting point is that we are using the <code>data-field-def</code> which will create a field accordingly to a schema definition
+    Here is the schema definition :
+</p>
+<pre data-dont-process><code class="javascript">task: {
+    columns : [
+        {name: "name", type: "text"}
+    ]
+}
+</code></pre>
+<p>
+    This feature is in field schema extension, so as usual, if you don't want to use it, just not load the extension
+</p>
+<p>
+    Now just open the view in a popup :
+</p>
+<pre data-dont-process><code class="javascript">view.openInPopup({width: 200, height: 150}, function(){
+    view.EL.name.focus() ;
+}) ;
+</code></pre>
+<p>
+    We give it a width and height. The function also take a callback that is called when the popup is shown.
+    We use it here to give focus in the name field.
+</p>
+<p>
+    The last part handle the validate event (triggered by the validate button having the <code>data-emit</code> attribute) :
+</p>
+<pre data-dont-process><code class="javascript">view.on("validate", function(){
+    var task = view.getData() ;
+    task.id = project.todo.length+project.inprogress.length+project.done.length +1 ;
+    task.status = "todo" ;
+    project.todo.push(task) ;
+    view.closePopup() ;
+    this.view.render() ;
+}.bind(this)) ;
+</code></pre>
+<p>
+    We call <code>view.getData()</code> to get the data inputed by user (so for our simple popup markup a task with name property).
+</p>
+<p>
+    A view has 2 function to get data from user input : 
+    <ol>
+        <li><code>getData()</code> which create a new object and populate it with bound input fields in the view</li>
+        <li><code>updateData()</code> which update the last rendered object with input fields values from the view</li>
+    </ol>
+</p>
+<p>
+    Once again, some would argue that in modern javascript framework, <strong>data should be updated automatically as user input ?</strong>
+    <br />
+    For me, it shouldn't no. For the following reasons : 
+    <ol>
+        <li>It is not a big stuff to call get/updateData in controller. Doing it automatically don't improve developer productivity that much</li>
+        <li>It breaks the MVC concept. The view should not take the initiative to change data, this is the job of the controller</li>
+        <li>It also have a performance impact. Though less than automatic render as no DOM redraw is needed but still it execute a lot of code when there is no need for it</li>
+    </ol>
+    Again, if you really want to do this kind of stuff, you can write a view extension to do it. 
+</p>
+<p>
+    The next lines are task creation management and finally we call the <code>closePopup()</code> on the popup view 
+    and <code>render()</code> on the global view
+</p>

@@ -5,31 +5,65 @@
   padding: 10px
 }  
 </style>
-<h1>What is VeloxJS ?</h1>
+<script>
+  function openPopup(ev){
+    var viewName = ev.type ;
+    new VeloxWebView("views/explain", viewName).openInPopup({width: $(window).width()-30, height: $(window).height()-30}) ;
 
-<p>
-  VeloxJS aims to be both a full JS framework and a set of independents tools. 
-  You can use it as a framework to get a full software architecture or you can only take the parts that you want in its features.
-</p>
-<p>
-  You can get more details in my full explaination about <a href="#why">why I wrote a JS framework</a>
-</p> 
+  }
 
-<h1>Demo</h1>
+  view.on("viewAndSubViews", openPopup) ;
+  view.on("styling", openPopup) ;
+  view.on("scripting", openPopup) ;
+  view.on("popup", openPopup) ;
+  view.on("mainView", openPopup) ;
+  view.on("crud", openPopup) ;
+</script>
 
+<div class="row">
+  <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+    <h1 class="text-yellow">Natural</h1>
+    <p class="text-justify">
+      VeloxJS try to be as natural as possible. Views is HTML file. Styling is CSS. Scripting is vanilla Javascript<br />
+      Behaviour should be as intuitive as possible with as least cryptic magic as possible
+    </p>
+  </div>
+  <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+    <h1 class="text-blue">Complete and modular</h1>
+    <p class="text-justify">
+      VeloxJS is complete with view, controller, database handling, offline sync and many high level features <br />
+      But it is modular and each part can be used on its own. You like VeloxJS views but don't need the other stuff ? just
+      load the view module and use it alone
+    </p>
+  </div>
+  <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+    <h1 class="text-green">Light and performant</h1>
+    <p class="text-justify">
+      VeloxJS is light. Really. The VeloxJS view (min+gzip) is 8.4KB. The whole VeloxJS view + all extensions is 21.3KB.<br />
+      Performance of VeloxJS does not rely on a magic new render engine but in the fact that it does 
+      few magic and keep its technical concept as close as what the browser is design to do as possible
+    </p>
+  </div>
+  <div class="col-lg-12">
+    <p>
+      You can get more details in my full explaination about <a href="#why">why I wrote a JS framework</a>
+    </p> 
+  </div>
+</div>
+<h1>Demonstration</h1>
 <p>
-  The usual TODO app demo demonstrate a some interresting feature of VeloxJS :
+  Here is the usual TODO app demo that demonstrate some interresting features of VeloxJS :
 </p> 
 <ul>
   <li>The welcome view do some real world application stuf such as : 
     <ul>
-      <li>2 level nested repeating subviews for projects and task</li>
-      <li>CSS styling rules</li>
-      <li>Custom JS to handle drag&drop</li>
-      <li>Popup for quick task creation</li>
+      <li>2 level nested repeating subviews for projects and task <a id="viewAndSubViews" data-emit class="btn btn-small btn-default">See explaination</a></li>
+      <li>CSS styling rules <a id="styling" data-emit class="btn btn-small btn-default">See explaination</a></li>
+      <li>Custom JS to handle drag&drop <a id="scripting" data-emit class="btn btn-small btn-default">See explaination</a></li>
+      <li>Popup for quick task creation <a id="popup" data-emit class="btn btn-small btn-default">See explaination</a></li>
     </ul>
   </li>
-  <li>The main view with its menu and language switcher</li>
-  <li>The task view with a classical CRUD grid/form UI</li>
+  <li>The main view with its menu and language switcher <a id="mainView" data-emit class="btn btn-small btn-default">See explaination</a></li>
+  <li>The task view with a classical CRUD grid/form UI <a id="crud" data-emit class="btn btn-small btn-default">See explaination</a></li>
 </ul>
 <div id="#todo_app"></div>

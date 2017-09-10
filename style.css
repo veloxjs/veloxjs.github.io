@@ -5,13 +5,36 @@ body{
 }
 
 h1 {
-    font-family: butlerbold ;
+    font-family: butlermedium;
+    font-size: 24px;
+    text-transform: uppercase;
+    font-weight: bold;
 }
+
+.text-red {
+    color: #fc3927;
+}
+
+.text-yellow {
+    color: #FFA550;
+}
+
+.text-blue {
+    color: #3897AA;
+}
+
+.text-green {
+    color: #00801C;
+}
+
+
 
 a, a:hover, a:active {
-    color: inherit
+    color: inherit;
 }
-
+p a {
+    text-decoration: underline
+}
 .code-legend {
     position: absolute;
     right: 15px;
@@ -53,4 +76,12 @@ code.hljs {
 
 .anchor-link:hover {
     opacity: 1;
+}
+
+.w2ui-popup .w2ui-popup-body {
+    font-size: 14px !important;
+}
+
+a {
+    cursor: pointer !important
 }

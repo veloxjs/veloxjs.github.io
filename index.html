@@ -62,7 +62,7 @@
               name: "velox-controller-view",
               type: "js",
               version: "0.0.1a",
-              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/926e620de8cc4c5d976c699003a3c76295f65eaa/velox-view-controller.js"
+              cdn: "https://cdn.rawgit.com/aetna-softwares/velox-controller/0f7573f95cfd3562b0d7c7c8e523ec01708b6d7c/velox-view-controller.js"
           },
            {
               name: "velox-controller-grid",
@@ -159,6 +159,40 @@
               addLabelToFields : true
           }) ;
 
+          window.bootstrap3decorator = function(element, fieldType){
+            if(element.parentElement && element.parentElement.className.indexOf("navbar-form") !== -1){
+                  //don't touch nav bar
+                  return;
+              }
+              if(fieldType === "select"){
+                  //for select, just add form-group class
+                  element.classList.add("form-group") ;
+                  return ;
+              }
+              if(fieldType === "upload" || fieldType === "pdf"){
+                  return; //do nothing on upload and pdf fields
+              }
+              var input = element.getElementsByTagName("input")[0] ;
+              if(input){
+                  //add boostrap form input control classes
+                  if(input.type === "checkbox"){
+                      element.className += " checkbox" ;
+                  }else{
+                      element.className += " form-group" ;
+                      input.className += " form-control" ;
+                  }
+              }else{
+                  //by default add the form-group class
+                  element.className += " form-group" ;
+              }
+          }
+          window.decorator = function(element, fieldType){
+            window.bootstrap3decorator(element, fieldType) ;
+          }
+          VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
+            window.decorator(element, fieldType) ;
+          }) ;
+
          VeloxWebView.i18n.configure({}, function(err){
             if(err){ 
                 return VeloxWebView.error(err);
@@ -175,13 +209,32 @@
               ]
             })
 
-
-
-            app.registerController(new VeloxViewController({
+            var welcomeCtrl = new VeloxViewController({
               directory : "views/welcome",
               name: "welcome",
               route: ""
-            }))
+            });
+
+            welcomeCtrl.enter = function(){
+              console.log("Enter welcome") ;
+              VeloxViewController.prototype.enter.call(this) ;
+            }
+            welcomeCtrl.stack = function(){
+              console.log("Stack welcome") ;
+              VeloxViewController.prototype.stack.call(this) ;
+            }
+
+            welcomeCtrl.unstack = function(){
+              console.log("Stack welcome") ;
+              VeloxViewController.prototype.unstack.call(this) ;
+            }
+
+            welcomeCtrl.close = function(){
+              console.log("Stack welcome") ;
+              VeloxViewController.prototype.close.call(this) ;
+            }
+
+            app.registerController(welcomeCtrl) ;
 
             app.registerController(new VeloxViewController({
               directory : "views/why",
@@ -203,6 +256,13 @@
               name: "api",
               route: "api"
             }))
+            
+            app.registerController(new VeloxViewController({
+              directory : "views/todo",
+              name: "todo",
+              route: "todo"
+            }))
+            
 
             app.navigate() ;
 

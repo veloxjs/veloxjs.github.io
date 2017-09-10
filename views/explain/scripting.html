@@ -1,0 +1,293 @@
+<h2>Scripting</h2>
+
+<p>
+    The view may need some scripting to manage its UI behaviour. 
+    In our example, we need to manage drag&drop.
+</p>
+<p>
+    To do so, just add a script tag at the top of the file (after the style tag if any) like this :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html">
+<style> 
+    /*(...)*/
+</style>
+<script>
+    //(...)
+</script>
+<div class="row todo-project-line" data-bind="projects[]">
+    <!--(...)-->
+</div>
+</code></pre>
+<p>
+    Let's see the code to manage the drag&drop :
+</p>
+
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html">
+<script>
+var allowDrop = function(e) {
+    e.preventDefault();
+}
+
+var onDragStart = function(ev){
+    //the dragged element is a task, the bound object is the task object
+    //the view system give you access to the element attached view in the HTML event
+    var task = ev.viewOfElement.getBoundObject() ;
+    //save data in drag & drop data
+    ev.dataTransfer.setData("id", task.id);
+    ev.dataTransfer.setData("status", task.status);
+}
+
+var onDrop = function(ev){
+    //the bound object of the drop target element is a project object
+    //the view system give you access to the element attached view in the HTML event
+    var project = ev.viewOfElement.getBoundObject() ;
+
+    //get data from drag data and markup
+    var taskId = ev.dataTransfer.getData("id");
+    var taskStatus = ev.dataTransfer.getData("status");
+    var targetStatus = ev.target.getAttribute("data-target-status") ;
+
+    //emit an event to the controller which will do what it has to do
+    view.emit("changeStatus", {taskId: taskId, fromStatus: taskStatus, toStatus: targetStatus, project: project}) ;
+}
+
+view.EL.blockTodo.addEventListener("dragover", allowDrop) ;
+view.EL.blockInProgress.addEventListener("dragover", allowDrop) ;
+view.EL.blockDone.addEventListener("dragover", allowDrop) ;
+
+view.EL.taskTodo.addEventListener("dragstart", onDragStart) ;
+view.EL.taskInProgress.addEventListener("dragstart", onDragStart) ;
+view.EL.taskDone.addEventListener("dragstart", onDragStart) ;
+
+view.EL.blockTodo.addEventListener("drop", onDrop) ;
+view.EL.blockInProgress.addEventListener("drop", onDrop) ;
+view.EL.blockDone.addEventListener("drop", onDrop) ;
+</script>
+<div class="row todo-project-line" data-bind="projects[]">
+    (...)
+    <div class="col-lg-9 (...)">
+        <div class="col-lg-4 (...)" >
+            <div id="blockTodo" data-target-status="todo">
+                <div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 (...)">
+            <div id="blockInProgress" data-target-status="inprogress">
+                <div class="block-legend" data-i18n="fields.values.task.status.inprogress"></div>
+                <div data-bind="inprogress[]" data-view="oneTask" draggable="true" id="taskInProgress"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 (...)">
+            <div class="todo-block" id="blockDone" data-target-status="done">
+                <div data-bind="done[]" data-view="oneTask" draggable="true" id="taskDone"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</code></pre>
+
+<p>
+    We use the standard HTML5 drag&drop, let's go step by step. 
+</p>
+<p>
+    The first important point is that this code is executed in an isolated function, 
+    it receives a <code>view</code> variable that is the view instance object
+</p>
+<p>
+    The code is ran one time when the view init is done just before it is displayed. 
+    When it run the markup is already available in the DOM.
+</p>
+<p>
+    This javascript code is just normal javascript with normal DOM. It won't go in any pre-processor and just run in 
+    normal browser context so when you need to integrate a third party JS lib, just follow the 
+    normal getting started, you don't need any special integration glue.
+</p>
+<p>
+    Now, here we go. The first part define 2 functions of drag and drop :
+</p>
+<pre data-dont-process><code class="javascript">
+var allowDrop = function(e) {
+    e.preventDefault();
+}
+
+var onDragStart = function(ev){
+    //the dragged element is a task, the bound object is the task object
+    //the view system give you access to the element attached view in the HTML event
+    var task = ev.viewOfElement.getBoundObject() ;
+    //save data in drag & drop data
+    ev.dataTransfer.setData("id", task.id);
+    ev.dataTransfer.setData("status", task.status);
+}
+</code></pre>
+<p>
+    The first one is just plain javascript to allow drop on an element (pick any HTML5 drap&drop tutorial to more details)
+</p>
+<p>
+    The second one is the function that will be called on starting drag a task (on <code>dragstart</code>).
+    Let's have a closer look at the first line :
+</p>
+<pre data-dont-process><code class="javascript">
+//the dragged element is a task, the bound object is the task object
+//the view system give you access to the element attached view in the HTML event
+var task = ev.viewOfElement.getBoundObject() ;
+</code></pre>
+<p>
+    We saw previously that task are repeating view inside the repeating project view so we will have many 
+    task HTML element in our DOM tree that will all call this function on the <code>dragstart</code> event.
+</p>
+<p>
+    So we need to know which task is currently dragged. VeloxJS enhance the standard HTML event object by
+    adding the property <code>viewOfElement</code> which is the view instance that contains the 
+    HTML element that trigger the event.
+</p>
+<p>
+    With the <code>getBoundObject()</code> function, we get the data object bound to this view, so in our case,
+    it is the task that is dragged.
+</p>
+<p>
+    The rest of the method is classical HTML5 drag&drop data transfer code.
+</p>
+<p>
+    Now, look at the drop function :
+</p>
+<pre data-dont-process><code class="javascript">
+var onDrop = function(ev){
+    //the bound object of the drop target element is a project object
+    //the view system give you access to the element attached view in the HTML event
+    var project = ev.viewOfElement.getBoundObject() ;
+
+    //get data from drag data and markup
+    var taskId = ev.dataTransfer.getData("id");
+    var taskStatus = ev.dataTransfer.getData("status");
+    var targetStatus = ev.target.getAttribute("data-target-status") ;
+
+    //emit an event to the controller which will do what it has to do
+    view.emit("changeStatus", {taskId: taskId, fromStatus: taskStatus, toStatus: targetStatus, project: project}) ;
+}
+</code></pre>
+<p>
+    Once again, we see the use of <code>ev.viewOfElement.getBoundObject()</code> to get the bound data object 
+    (which in this case is the project as the drop area belong to project).
+</p>
+<p>
+    The next 3 lines are classical HTML5 code to get dragged data.
+</p>
+<p>
+    The last line emit a view event : 
+</p>
+<pre data-dont-process><code class="javascript">
+//emit an event to the controller which will do what it has to do
+view.emit("changeStatus", {
+    taskId: taskId, 
+    fromStatus: taskStatus, 
+    toStatus: targetStatus, 
+    project: project
+}) ;
+</code></pre>
+<p>
+    This emit an event <code>"changeStatus"</code> and give it some contextual information about what has been dropped.
+    And that all what the view should do. The controller will listen to the event and manage the consequences of element drop.
+</p>
+<p>
+    <strong>Why the view should not actually do the move ? </strong> <br />
+    That is more a conceptual point of view than a technical limitation. The controller is here to control the data and view.
+    it contains your application logic. For example, when change the status of a task, you may want to check some informations
+    and finally tell the user that this move has some impact that he should be aware of. It may be a warning like 
+    "You are moving this task to todo state, the project was closed it will be reopenned, are you sure ?"
+    <br />
+    This is kind of stuff that the view should not have to know as its job is to render data on screen and receive user actions
+    <br />
+    A good way to decide if some code must be in the view or in the controller, you should think that your view layer should be replaced
+    by another view system (for example replace it by a React Native or Native Script implementation for mobile).
+    You controller code should be the same for both views implementation.
+</p>
+<p>
+    Once again, VeloxJS won't oblige you to anything on this matters. All application has its own context and constraint and you are free
+    to use it as you whish !
+</p>
+<p>
+    So now, let's see the controller part : 
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+todoWelcomeController.onChangeStatus = function(ev){
+    var fromStatus = ev.data.fromStatus ;
+    var taskId = ev.data.taskId ;
+    var toStatus = ev.data.toStatus ;
+    var project = ev.data.project ;    
+    project[fromStatus].some(function(t, i){
+        if(t.id == taskId){
+            var task = project[fromStatus].splice(i, 1) ;
+            task[0].status = toStatus ;
+            project[toStatus].push(task[0]) ;
+        }
+    }) ;
+    this.view.render() ;
+} ;
+</code></pre>
+<p>
+    The listener receive the event with linked data in <code>ev.data</code> : 
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+    var fromStatus = ev.data.fromStatus ;
+    var taskId = ev.data.taskId ;
+    var toStatus = ev.data.toStatus ;
+    var project = ev.data.project ;    
+</code></pre>
+<p>
+    The following loop is just standard javascript data manipulation. 
+    For the example, we play only with javascript object in memory. 
+    In real application, you may want to call your server and do some database stuff...
+</p>
+<p>
+    After data manipulation done, we call the view to re-render the data on screen :
+</p>
+<pre data-dont-process><div class="code-legend">Controller</div><code class="javascript">
+    this.view.render() ;   
+</code></pre>
+<p>
+    Wait.. In modern javascript framework, <strong>does this should not be automatic with magical Object.observe stuff or something ???</strong>
+    <br />
+    Well, for me, no. For 2 reasons : 
+    <ol>
+        <li>It is not a big stuff to call render in controller. Doing it automatically don't improve developer productivity in any way</li>
+        <li>Automatic refresh may have a real impact on performances and lead to complex rendering engine to resolve the problem</li>
+    </ol>
+    If you really want to do this kind of stuff, you can write a view extension to do it. 
+</p>
+<p>
+    Go back to our view script to look at the last lines :
+</p>
+<pre data-dont-process><code class="javascript">
+    view.EL.blockTodo.addEventListener("dragover", allowDrop) ;
+    view.EL.blockInProgress.addEventListener("dragover", allowDrop) ;
+    view.EL.blockDone.addEventListener("dragover", allowDrop) ;
+
+    view.EL.taskTodo.addEventListener("dragstart", onDragStart) ;
+    view.EL.taskInProgress.addEventListener("dragstart", onDragStart) ;
+    view.EL.taskDone.addEventListener("dragstart", onDragStart) ;
+
+    view.EL.blockTodo.addEventListener("drop", onDrop) ;
+    view.EL.blockInProgress.addEventListener("drop", onDrop) ;
+    view.EL.blockDone.addEventListener("drop", onDrop) ;  
+</code></pre>
+<p>
+    You may have recognized the usual <code>addEventListener</code> on HTML events but they are not called on a 
+    classical <code>document.getElementById</code>.
+    This is because the <code>id</code> attribute is the only element of your HTML that is modified by the view system.
+    <br />
+<pre data-dont-process><code class="html"><div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo" data-view-id="taskTodo"></div>
+</code></pre>
+become
+<pre data-dont-process><code class="html"><div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo_-_d72fb310-c19c-424a-935f-402e0b06768f" data-view-id="taskTodo" data-original-id="taskTodo"></div>
+</code></pre>
+This is because a view can be repeated many times in the document (in case your view is a composant re-used many time)
+or the element can be repeated in a loop like our projects and tasks of this example.
+</p>
+<p>
+    So, VeloxJS gives you a easy access to your elements by their id with the <code>view.EL</code> collection.
+</p>
+<p>
+    In the case of repeating element, new HTML element may be added in the DOM on each view render.<br />
+    By registering event with <code>view.EL</code>, the VeloxJS view system will takes care to add it to all newly added 
+    HTML element in the loop
+</p>

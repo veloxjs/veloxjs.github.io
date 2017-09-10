@@ -1,0 +1,137 @@
+<h2>
+    Views and subviews
+</h2>
+<p>This explaination will guide you in the creation of the welcome view of the TODO example</p>
+<p>
+    A view start by an HTML file container the HTML fragment to display
+</p>
+<p>
+    Here is the HTML of the TODO example welcome view :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html">
+<div class="row todo-project-line" data-bind="projects[]">
+    <div class="col-lg-3 (...)">
+        <div><label data-bind="name"></label></div>
+        <button class="btn (...)" data-i18n="todo.createTask" id="createTask" data-emit></button>
+    </div>
+    <div class="col-lg-9 (...)">
+        <div class="col-lg-4 (...)" >
+            <div class="todo-todo-block todo-block" id="blockTodo" data-target-status="todo">
+                <div class="block-legend" data-i18n="fields.values.task.status.todo"></div>
+                <div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 (...)">
+            <div class="todo-inprogress-block todo-block" id="blockInProgress" data-target-status="inprogress">
+                <div class="block-legend" data-i18n="fields.values.task.status.inprogress"></div>
+                <div data-bind="inprogress[]" data-view="oneTask" draggable="true" id="taskInProgress"></div>
+            </div>
+        </div>
+        <div class="col-lg-4 (...)">
+            <div class="todo-done-block todo-block" id="blockDone" data-target-status="done">
+                <div class="block-legend" data-i18n="fields.values.task.status.done"></div>
+                <div data-bind="done[]" data-view="oneTask" draggable="true" id="taskDone"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</code></pre>
+
+<p>
+    Let's walk through the structure of this HTML
+</p>
+
+<p>
+    The first div that enclose the whole view is : 
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html"><div class="row todo-project-line" data-bind="projects[]">
+    
+</div>
+</code></pre>
+<p>
+    We can see that it is binded to the project[] array (<code class="html">data-bind="projects[]"</code>)
+    This means that the whole tag will repeat for each occurence in array project of data structure that will 
+    be render in the view.
+</p>
+<p>
+    Each element in project array will render in a subview, the data bound to each subview will be the project rendered in it.
+</p>
+
+<p>
+    Now, we go a little further and add a few tag inside our projects "loop" :
+</p>
+
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html"><div class="row todo-project-line" data-bind="projects[]">
+    <div class="col-lg-3 (...)">
+        <div><label data-bind="name"></label></div>
+        <button class="btn (...)" data-i18n="todo.createTask" id="createTask" data-emit></button>
+    </div>
+</div>
+</code></pre>
+
+<p>
+    First, we see a :
+<pre data-dont-process><code class="html"><label data-bind="name"></label></code></pre>
+    As you may guessed, it means that this label is bound to the name property of our project item. The content of the tag will be the value of the project.name
+</p>
+<p>
+    You also noticed the button : 
+<pre data-dont-process><code class="html"><button class="btn (...)" data-i18n="todo.createTask" id="createTask" data-emit></button></code></pre>
+    The first interesting attribute is <code class="html">data-i18n="todo.createTask"</code> which is the translation code for multilang support (note that this feature is in the i18n extension, meaning that if you don't need it or want to do it another way, just don't load the extension)
+</p>
+<p>
+    The second interesting attribute is <code class="html">data-emit</code> which mean that a click on this button will emit an event that a controller may listen to. 
+    This is a key point of the view system : <strong>the view doesn't know the controller</strong> (so no <code class="html">onClick="myController.doClick()"</code>), a view is like a 
+    super HTML element : it displays something and emit event on user actions.
+</p>
+
+<p>
+    The last piece of HTML is 3 blocks for todo, inprogress and done tasks :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html"><div class="col-lg-9 (...)">
+    <div class="col-lg-4 (...)" >
+        <div class="todo-todo-block todo-block" id="blockTodo" data-target-status="todo">
+            <div class="block-legend" data-i18n="fields.values.task.status.todo"></div>
+            <div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo"></div>
+        </div>
+    </div>
+    <div class="col-lg-4 (...)">
+        <div class="todo-inprogress-block todo-block" id="blockInProgress" data-target-status="inprogress">
+            <div class="block-legend" data-i18n="fields.values.task.status.inprogress"></div>
+            <div data-bind="inprogress[]" data-view="oneTask" draggable="true" id="taskInProgress"></div>
+        </div>
+    </div>
+    <div class="col-lg-4 (...)">
+        <div class="todo-done-block todo-block" id="blockDone" data-target-status="done">
+            <div class="block-legend" data-i18n="fields.values.task.status.done"></div>
+            <div data-bind="done[]" data-view="oneTask" draggable="true" id="taskDone"></div>
+        </div>
+    </div>
+</div>
+</code></pre>
+<p>
+    We can notice again the <code class="html">data-i18n=""</code> attribute
+    and we see again the array loop binding <code class="html">data-bind="todo[]"</code>, but this time instead of having the content of the loop directly
+    in this HTML file, it references another view file through the attribute <code class="html">data-view="oneTask"</code>. We will be able to reuse the same
+    code to render tasks of our 3 arrays todo, inprogress and done.
+</p>
+<p>
+    Here is the oneTask view:
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html"><div class="todo-task">
+    <label data-bind="name"></label>
+</div>
+</code></pre>
+<p>
+    Again, in this view, we have a <code class="html">data-bind="name"</code> label which will render the name property of the task
+</p>
+<p>
+    With this simple example, we saw a few useful concepts : 
+    <ul>
+        <li>Repeating HTML block in the view with <code class="html">data-bind="project[]"</code></li>
+        <li>Render simple properties with <code class="html">data-bind="name"</code></li>
+        <li>Manage multilang with <code class="html">data-i18n="..."</code></li>
+        <li>Emit events with <code class="html">data-emit</code></li>
+        <li>Repeating other views with <code class="html">data-view="oneTask"</code></li>
+    </ul>
+</p>

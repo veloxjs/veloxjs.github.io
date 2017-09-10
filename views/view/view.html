@@ -146,7 +146,8 @@
             "hello_longtask", //name of the HTML view file
             {container: view.EL.example_hello_longtask} 
         ) ;
-        v.error = function(message) {window.alert(message); } //by pass dialog extension
+        
+        //v.error = function(message) {window.alert(message); } 
         v.open() ;
         v.on("startCb", function(){
             //start a long task in callback style
@@ -168,7 +169,11 @@
             //start a long task in callback style
             v.longTask(function(done){
                 setTimeout(function(){
+                    //by pass dialog extension
+                    VeloxWebView.real_error =  VeloxWebView.error ;
+                    VeloxWebView.error = function(message) {window.alert(message); } 
                     done("Dear user, we are very sorry but some solar disturbances reach our server and you experience a very unlikely error") ;
+                    VeloxWebView.error =  VeloxWebView.real_error ;
                 }, 2000) ;
             }) ;
         }) ;
@@ -176,7 +181,13 @@
             //start a long task in promise style
             v.longTask(new Promise((resolve, reject)=>{
                 setTimeout(function(){
+                    //by pass dialog extension
+                    VeloxWebView.real_error =  VeloxWebView.error ;
+                    VeloxWebView.error = function(message) {window.alert(message); } 
                     reject("Due to alien invasion in our office, the software decide by itself to create random errors") ;
+                    setTimeout(function(){
+                        VeloxWebView.error =  VeloxWebView.real_error ;
+                    }, 100) ;
                 }, 2000) ;
             })) ;
         }) ;
@@ -273,36 +284,16 @@
     })() ;
     
     (function example_hello_fields(){
+        window.decorator = function(){} ;
         var v = new VeloxWebView(
             "examples", //folder in which the HTML view file is located
             "hello_fields", //name of the HTML view file
             {container: view.EL.example_hello_fields} 
         ) ;
         v.open(function(){
-            VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
-                if(fieldType === "select"){
-                    //for select, just add form-group class
-                    element.classList.add("form-group") ;
-                    return ;
-                }
-                if(fieldType === "upload" || fieldType === "pdf"){
-                    return; //do nothing on upload and pdf fields
-                }
-                var input = element.getElementsByTagName("input")[0] ;
-                if(input){
-                    //add boostrap form input control classes
-                    if(input.type === "checkbox"){
-                        element.className += " checkbox" ;
-                    }else{
-                        element.className += " form-group" ;
-                        input.className += " form-control" ;
-                    }
-                }else{
-                    //by default add the form-group class
-                    element.className += " form-group" ;
-                }
-
-            }) ;
+            window.decorator = function(element, fieldType){
+                window.bootstrap3decorator(element, fieldType) ;
+            }
             var v = new VeloxWebView(
                 "examples", //folder in which the HTML view file is located
                 "hello_fields_deco", //name of the HTML view file

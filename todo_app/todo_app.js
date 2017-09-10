@@ -60,33 +60,7 @@ function TodoApp(){
     //     addLabelToFields : true
     // }) ;
 
-    VeloxWebView.fields.addDecorator(function bootstrap3decorator(element, fieldType){
-        if(element.parentElement && element.parentElement.className.indexOf("navbar-form") !== -1){
-            //don't touch nav bar
-            return;
-        }
-        if(fieldType === "select"){
-            //for select, just add form-group class
-            element.classList.add("form-group") ;
-            return ;
-        }
-        if(fieldType === "upload" || fieldType === "pdf"){
-            return; //do nothing on upload and pdf fields
-        }
-        var input = element.getElementsByTagName("input")[0] ;
-        if(input){
-            //add boostrap form input control classes
-            if(input.type === "checkbox"){
-                element.className += " checkbox" ;
-            }else{
-                element.className += " form-group" ;
-                input.className += " form-control" ;
-            }
-        }else{
-            //by default add the form-group class
-            element.className += " form-group" ;
-        }
-    }) ;
+    
 
     VeloxFormController.setOptions({
         buttonsHTML: '<button id="btBack" class="btn btn-default" data-emit><i class="fa fa-chevron-left"></i>&nbsp;</button>'+

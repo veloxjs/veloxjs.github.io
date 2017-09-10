@@ -1,0 +1,64 @@
+<h2>
+    Styling
+</h2>
+<p>
+    CSS is a powerful system to manage style of your application. Infortunately, in most of the cases it mixes 2 usages :
+    <ol>
+        <li>Theming : colors, background images, fonts... which is most of the time a definition global to the whole application</li>
+        <li>Layout and positioning : How the elements are displayed 
+            (all the <code class="html">float</code>,  <code class="html">position: absolute</code>, <code class="html">flex</code>, ...).
+            Which is usually closely linked to the HTML markup to which it is related
+    </ol>
+    VeloxJS view system considers that the first point is outside of the view scope : just keep your global CSS file 
+    (created with with whatever CSS pre-processor you like if you are kind of this kind of tools).
+</p>
+<p>
+    For the second point, we think that the CSS rules should stay as near the HTML as possible as it is often closely linked to it
+</p>
+<p>
+    So you can just put them right on the top of your HTML view file like this :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html">
+<style> 
+.block-legend {
+    position: absolute;
+    text-transform: uppercase;
+    font-weight: bold;
+    opacity: .5;
+    transform: rotate(270deg);
+    transform-origin: 5px 14px;
+    bottom: 0;
+    color: #dedede;
+}
+
+.todo-task {
+    background: rgba(255, 255, 255, 0.41);
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin: 10px 0px;
+    cursor: move;
+}
+.todo-task > * {
+    cursor: move;
+}
+</style>
+<div class="row todo-project-line" data-bind="projects[]">
+    (...)
+</div>
+</code></pre>
+
+<p>
+    There is absolutely nothing special with this CSS code, it is just normal plain CSS rules that will be loaded when you will open the view the first time
+</p>
+
+<p>
+    In the case where you have a complicated view with a lot of markup and CSS rules, you can put CSS rules in a separated file and reference it in your view like this :
+</p>
+<pre data-dont-process><div class="code-legend">todo_app/views/welcome.html</div><code class="html"><style data-file="welcome.css"></style>
+<div class="row todo-project-line" data-bind="projects[]">
+        (...)
+</div>
+</code></pre>
+<p>
+    welcome.css is a CSS file in the same directory as the view HTML file. You may use relative path if you need to reference a file elsewhere.
+</p>
