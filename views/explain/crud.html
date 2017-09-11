@@ -149,15 +149,15 @@ taskController.formController.saveRecords = function(records, callback){
     var task = records[0].record ;
     todoData.projects.some(function(p){
         if(p.id == task.projectId){
-            var updated = p[task.status].some(function(t){
-                if(t.id == task.id){
-                    Object.keys(task).forEach(function(k){ t[k] = task[k] ;}) ;
-                    return true ;
-                }
-            }) ;
-            if(!updated){
-                p[task.status].push(task) ;   
-            }
+            ["todo", "inprogress", "done"].some(function(status){
+                return p[status].some(function(t, i){
+                    if(t.id == task.id){
+                        p[status].splice(i, 1) ;
+                        return true ;
+                    }
+                }) ;
+            });
+            p[task.status].push(task) ;   
             return true ;
         }
     }) ;
