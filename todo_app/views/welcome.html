@@ -98,27 +98,29 @@
         <button class="btn btn-primary" data-i18n="todo.createTask" id="createTask" data-emit></button>
     </div>
     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" >
-            <div class="todo-todo-block todo-block" id="blockTodo" data-target-status="todo">
-                <div class="block-legend" data-i18n="fields.values.task.status.todo"></div>
-                <div>
-                    <div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo"></div>
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" >
+                <div class="todo-todo-block todo-block" id="blockTodo" data-target-status="todo">
+                    <div class="block-legend" data-i18n="fields.values.task.status.todo"></div>
+                    <div>
+                        <div data-bind="todo[]" data-view="oneTask" draggable="true" id="taskTodo"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <div class="todo-inprogress-block todo-block" id="blockInProgress" data-target-status="inprogress">
-                <div class="block-legend" data-i18n="fields.values.task.status.inprogress"></div>
-                <div>
-                    <div data-bind="inprogress[]" data-view="oneTask" draggable="true" id="taskInProgress"></div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="todo-inprogress-block todo-block" id="blockInProgress" data-target-status="inprogress">
+                    <div class="block-legend" data-i18n="fields.values.task.status.inprogress"></div>
+                    <div>
+                        <div data-bind="inprogress[]" data-view="oneTask" draggable="true" id="taskInProgress"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <div class="todo-done-block todo-block" id="blockDone" data-target-status="done">
-                <div class="block-legend" data-i18n="fields.values.task.status.done"></div>
-                <div>
-                    <div data-bind="done[]" data-view="oneTask" draggable="true" id="taskDone"></div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="todo-done-block todo-block" id="blockDone" data-target-status="done">
+                    <div class="block-legend" data-i18n="fields.values.task.status.done"></div>
+                    <div>
+                        <div data-bind="done[]" data-view="oneTask" draggable="true" id="taskDone"></div>
+                    </div>
                 </div>
             </div>
         </div>
