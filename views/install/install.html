@@ -1,0 +1,156 @@
+<h1>Client side libraries</h1>
+
+<h2>CDN</h2>
+
+<h3>VeloxJS View</h3>
+
+<h4>Minimal imports</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-loader/c53d798e/VeloxScriptLoader.js"></script>
+<script src="https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/velox-web-view.js"></script>
+</code></pre>
+<h4>Extension i18n</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-i18next.js"></script></code></pre>
+<h4>Extension dialogs</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-dialogs.js"></script></code></pre>
+<h4>Extension fields</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-fields.js"></script></code></pre>
+<h4>Extension fields schema</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-fields-schema.js"></script></code></pre>
+<h4>Extension list</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-view/8beee9d27163fd828897f9631f393f72887ef880/ext/velox-list.js"></script></code></pre>
+
+<h3>VeloxJS Controller</h3>
+
+<h4>Minimal import</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-controller/82d7b847235fb72dd83150dd3ea41ceca2f1c68b/velox-app-controller.js"></script></code></pre>
+
+<h4>View controllers</h4>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-controller/82d7b847235fb72dd83150dd3ea41ceca2f1c68b/velox-view-controller.js"></script>
+<script src="https://cdn.rawgit.com/aetna-softwares/velox-controller/82d7b847235fb72dd83150dd3ea41ceca2f1c68b/velox-grid-controller.js"></script>
+<script src="https://cdn.rawgit.com/aetna-softwares/velox-controller/82d7b847235fb72dd83150dd3ea41ceca2f1c68b/velox-form-controller.js"></script>
+<script src="https://cdn.rawgit.com/aetna-softwares/velox-controller/82d7b847235fb72dd83150dd3ea41ceca2f1c68b/velox-grid-and-form-controller.js"></script>
+</code></pre>
+
+<h2>Bower</h2>
+
+<h3>VeloxJS View</h3>
+
+<pre><code class="bash">bower install --save https://github.com/aetna-softwares/velox-view.git#master</script></code></pre>
+
+<h3>VeloxJS Controller</h3>
+
+<pre><code class="bash">bower install --save https://github.com/aetna-softwares/velox-controller.git#master</script></code></pre>
+
+<h2>Using VeloxJS lib loader</h2>
+<p>
+    The VeloxJS lib loader allows you to switch from CDN to Bower dynamically
+</p>
+<pre><code class="html"><script src="https://cdn.rawgit.com/aetna-softwares/velox-loader/c53d798e/VeloxScriptLoader.js"></script>
+<script>
+window.addEventListener("load", function load(event){
+
+var CDN_URL = "https://cdn.rawgit.com/aetna-softwares" ;
+var versions = {
+    view : "8beee9d27163fd828897f9631f393f72887ef880",
+    loader: "c53d798e",
+    controller: "82d7b847235fb72dd83150dd3ea41ceca2f1c68b"
+}
+
+//change policy to cdn to switch to CDN mode
+veloxScriptLoader.setOptions({policy: "bower", bowerPath: "bower_components"}) ;
+
+veloxScriptLoader.load(
+    [ 
+    {
+        name: "velox-web-view",
+        type: "js",
+        version: versions.view,
+        cdn: CDN_URL+"/velox-view/$VERSION/velox-web-view.js",
+        bowerPath: "velox-view/velox-web-view.js"
+    },
+    {
+        name: "velox-web-view-dialog",
+        type: "js",
+        version: versions.view,
+        cdn: CDN_URL+"/velox-view/$VERSION/ext/velox-dialogs.js",
+        bowerPath: "velox-view/velox-dialogs.js"
+    },
+    {
+        name: "velox-web-view-i18n",
+        type: "js",
+        version: versions.view,
+        cdn: CDN_URL+"/velox-view/$VERSION/ext/velox-i18next.js",
+        bowerPath: "velox-view/velox-i18next.js"
+    },
+    {
+        name: "velox-web-view-fields",
+        type: "js",
+        version: versions.view,
+        cdn: CDN_URL+"/velox-view/$VERSION/ext/velox-fields.js",
+        bowerPath: "velox-view/velox-fields.js"
+    },
+    {
+        name: "velox-web-view-fields-schema",
+        type: "js",
+        version: versions.view,
+        cdn: CDN_URL+"/velox-view/$VERSION/ext/velox-fields-schema.js",
+        bowerPath: "velox-view/velox-fields-schema.js"
+    },
+    {
+        name: "velox-web-view-list",
+        type: "js",
+        version: versions.view,
+        cdn: CDN_URL+"/velox-view/$VERSION/ext/velox-list.js",
+        bowerPath: "velox-view/velox-list.js"
+    },
+    {
+        name: "velox-controller",
+        type: "js",
+        version: versions.controller,
+        cdn: CDN_URL+"/velox-controller/$VERSION/velox-app-controller.js",
+        bowerPath: "velox-controller/velox-app-controller.js"
+    },
+    {
+        name: "velox-controller-view",
+        type: "js",
+        version: versions.controller,
+        cdn: CDN_URL+"/velox-controller/$VERSION/velox-view-controller.js",
+        bowerPath: "velox-controller/velox-view-controller.js"
+    },
+    {
+        name: "velox-controller-grid",
+        type: "js",
+        version: versions.controller,
+        cdn: CDN_URL+"/velox-controller/$VERSION/velox-form-controller.js",
+        bowerPath: "velox-controller/velox-form-controller.js"
+    },
+    {
+        name: "velox-controller-form",
+        type: "js",
+        version: versions.controller,
+        cdn: CDN_URL+"/velox-controller/$VERSION/velox-grid-controller.js",
+        bowerPath: "velox-controller/velox-grid-controller.js"
+    },
+    {
+        name: "velox-controller-grid-and-form",
+        type: "js",
+        version: versions.controller,
+        cdn: CDN_URL+"/velox-controller/$VERSION/velox-grid-and-form-controller.js",
+        bowerPath: "velox-controller/velox-grid-and-form-controller.js"
+    }
+    ]
+, function(){
+    //your app startup code here...
+  });
+});
+</script>
+</code></pre>
+
+<h2>NPM</h2>
+
+Comming soon...
+
+
+<h1>Server side libraries</h1>
+
+Comming soon...
